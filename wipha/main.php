@@ -45,6 +45,11 @@ new Session('wipha');
 require_once('libs/login.php');
 require_once('libs/wipha.php');
 
+
+require_once('libs/http-conditional.php');
+httpConditional(time(), 0, 0, false, false, false);
+
+
 $login =& new Login(false);
 if (isset($_GET['logout'])) {
     $login->logout();
@@ -85,6 +90,9 @@ if (count($get)>0) {
             break;        
         case array('fs'):
             $action = 'fullsize';
+            break;        
+        case array('vd'):
+            $action = 'video';
             break;        
         case array('sl'):
         case array('sl', 'time'):
@@ -132,6 +140,9 @@ switch($action) {
         break;
     case 'fullsize':
         $wipha->sendPhoto($_GET['fs']);
+        break;
+    case 'video':
+        $wipha->sendVideo($_GET['vd']);
         break;
     case 'slideshow':
         $wipha->displaySlideshow($_GET['sl'], $_GET['time']);

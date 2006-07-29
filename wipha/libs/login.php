@@ -54,7 +54,7 @@ class Login {
         } elseif ( ! isset($_SESSION['user'])) {
             if (isset($_POST['user']) || isset($_POST['passwd'])) {
                 $this->doGUILogin($_POST['user'], $_POST['passwd']);
-            } elseif (isset($_GET['guest']) || $_SESSION['browser']['app']=='W3C_VALIDATOR') {
+            } elseif (isset($_GET['guest']) || isset($_SESSION['browser']['no_interaction'])) {
                 unset($_GET['guest']); unset($_REQUEST['guest']);
                 $_SESSION['loginUrl'] = $_SERVER['REQUEST_URI'];
                 $_SESSION['loginUrl'] = preg_replace('/(\\?|&)guest/', '', $_SESSION['loginUrl']);
@@ -63,6 +63,8 @@ class Login {
                 $_SESSION['loginUrl'] = $_SERVER['REQUEST_URI'];
                 $this->displayLoginForm();
             }
+        } elseif (isset($_GET['guest'])) {
+            unset($_GET['guest']); unset($_REQUEST['guest']);
         }
         if ($requestAdmin && !$_SESSION['is_admin']) {
             reloadUrl('main.php');

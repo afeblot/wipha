@@ -15,7 +15,11 @@
     <tr>
     <td align="center" valign="bottom" {$photoId|is_in_array:$download:'class="selected"'}>
         <div class="centercell"> <div class="ydsf"> <div class="inner">
+{if $photo.MediaType eq "Image"}
             <img class="photo" src="{$smarty.server.SCRIPT_NAME}?ph={$photoId}&amp;lib={$smarty.session.library.id}" alt="" id="p{$photoId}" width="{$width}" height="{$height}"/>
+{else}
+            <img class="photo" src="{$smarty.server.SCRIPT_NAME}?th={$photoId}&amp;lib={$smarty.session.library.id}" alt="" id="p{$photoId}" width="{$width}" height="{$height}"/>
+{/if}
         </div> </div> </div>
         <div class="legend">
             {if $photo.Caption ne ""}
@@ -23,15 +27,21 @@
             {/if}{if $photo.Comment ne ""}
                 <div class="comment">{$photo.Comment|escape}</div>
             {/if}
-            <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?fs={$photoId}&amp;lib={$smarty.session.library.id}" target="_blank"><img src="skin/{#skin#}/zoom.gif" alt="zoom" title="Display the full size photo" /></a></div>
-            <div class="date">{$photo.Timestamp|date_format:"%d %b %Y, %H:%M:%S"}</div>        
+            {if $photo.MediaType eq "Image"}
+                <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?fs={$photoId}&amp;lib={$smarty.session.library.id}" target="_blank"><img src="skin/{#skin#}/zoom.gif" alt="zoom" title="Display the full size photo" /></a></div>
+            {else}
+                <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?vd={$photoId}&amp;lib={$smarty.session.library.id}" target="_blank"><img src="skin/{#skin#}/video.png" alt="view video" title="View video" /></a></div>
+            {/if}
+           <div class="date">{$photo.Timestamp|date_format:"%d %b %Y, %H:%M:%S"}</div>        
         </div>
     </td>
     </tr></table>
     
-    <div id="exif">
-        <a class="perm" href="#" id="x{$photoId}">Show EXIF data</a>
-    </div>
+    {if $photo.MediaType eq "Image"}
+        <div id="exif">
+            <a class="perm" href="#" id="x{$photoId}">Show EXIF data</a>
+        </div>
+    {/if}
 
 </div>
 {if $state == "playing"}
