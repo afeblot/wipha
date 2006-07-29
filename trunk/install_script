@@ -1,12 +1,23 @@
 #!/bin/sh
 
+# more /System/Library/CoreServices/ServerVersion.plist
+
 log=/tmp/wipha.log
+date=$(date "+%d_%b_%Y-%H:%M:%S")
 
 function test_error() {
     if [ $1 != "0" ]; then
         cat $log
         echo "... Abort ..."
         exit 1
+    fi
+}
+
+function backupOnce() {
+    backupFile=$1.bak_WiPha_$date
+    if ! [ -f $backupFile ]; then
+        cp $1 $backupFile  2>$log
+        test_error $?
     fi
 }
 
@@ -24,6 +35,21 @@ fi
 
 home="/Users/$user"
 dest="$home/Sites"
+
+if  ! [ -d "$dest" ]; then
+    otherDest="$HOME/Sites"
+    if [ -d "$otherDest" ]; then
+        dest=$otherDest
+    else
+        echo "Can't find a correct destination for WiPhA. Tried:"
+        echo "   - $dest"        
+        if [ "$otherDest" != "$dest" ]; then
+            echo "   - $otherDest"
+        fi
+        exit 1
+    fi
+fi
+
 unique=$(date "+%d_%b_%Y-%H_%M_%S")
 
 if [ -e "$dest/wipha" ]; then
@@ -34,7 +60,7 @@ if [ -e "$dest/wipha" ]; then
         echo
         echo "Saving previous WiPhA data"
         mv "$dest/wipha/data" "/tmp/data_$unique" 2> $log
-	    test_error $?
+        test_error $?
     else
         echo
         echo "Your previous preferences are too different from the current version preferences and won't be saved. Sorry."
@@ -100,46 +126,29 @@ awk ' \
 ' /etc/httpd/httpd.conf 1> /tmp/httpd.conf 2>$log
 test_error $?
 if [ "$(diff /etc/httpd/httpd.conf /tmp/httpd.conf)" != "" ]; then
-    mv /etc/httpd/httpd.conf /etc/httpd/httpd.conf.bak_WiPha_$(date "+%d_%b_%Y-%H:%M:%S")  2>$log
-    test_error $?
+    backupOnce /etc/httpd/httpd.conf
     mv /tmp/httpd.conf /etc/httpd/httpd.conf  2>$log
     test_error $?
 else
     rm /tmp/httpd.conf
-	echo "    Was already done"
+    echo "    Was already done"
 fi
 
 echo
-echo "Configuring Apache to use local .htaccess for user $user"
-userconf="/etc/httpd/users/$user.conf"
-if [ -e "$userconf" ]; then
-    awk ' \
-    /[ \t]*AllowOverride[ \t]+None/ {print "    # Following line modified by WiPha installer (None -> All)"; print "    AllowOverride All"; next} \
-    {print $0} \
-    ' $userconf 1> /tmp/user.conf 2>$log
-    test_error $?
-	if [ "$(diff $userconf /tmp/user.conf)" != "" ]; then
-        mv $userconf $userconf.bak_WiPha_$(date "+%d_%b_%Y-%H:%M:%S")  2>$log
-        test_error $?
-        mv /tmp/user.conf $userconf  2>$log
-        test_error $?
-    else
-        rm /tmp/user.conf
-	    echo "    Was already done"
-    fi
-else
-	echo "    Creating the user Apache configuration file"
-	cat << EOF 1> $userconf 2> $log
-# Created by the WiPha installer (why hasn't it be created by OSX at user creation???)
-<Directory "/Users/$user/Sites/">
-    Options Indexes MultiViews
-    # Following line modified by WiPha installer (None -> All)
+echo "Configuring Apache to take wipha access protection in account (.htaccess)"
+perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"/Users/\*/Sites/wipha">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' /etc/httpd/httpd.conf
+if [ "$?" != "1" ]; then
+    backupOnce /etc/httpd/httpd.conf
+    cat << EOF 1>> /etc/httpd/httpd.conf 2> $log
+
+# Following lines added by WiPha installer to take wipha .htaccess into account
+<Directory "/Users/*/Sites/wipha">
     AllowOverride All
-    Order allow,deny
-    Allow from all
 </Directory>
 EOF
     test_error $?
+else
+    echo "    Was already done"
 fi
 
 
@@ -177,15 +186,14 @@ if [ "$load" == "1" ] && [ "$add" == "1" ]; then echo "ok (unless other PHP vers
     echo "        AddModule mod_php4.c"
 fi
 
-echo -n "Updated Apache user config: "
-# location=$(grep -c -E "^[ \t]*Directory[ \t]+\"/Users/$user/Sites\"" /etc/httpd/users/$user.conf)
-location=$(grep -c -E "^[ \t]*<Directory[ \t]+\"/Users/$user/Sites/\"" /etc/httpd/users/$user.conf)
-override=$(grep -c -E "^[ \t]*AllowOverride[ \t]+All" /etc/httpd/users/$user.conf)
-if [ "$override" == "1" ] && [ "$location" == "1" ]; then echo "ok (probably)"; else
+echo -n "WiPhA access protection enabled (.htaccess): "
+perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"/Users/\*/Sites/wipha">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' /etc/httpd/httpd.conf
+if [ "$?" == "1" ]; then echo "ok"; else
     echo "KO !"; err=1
-    echo "    You should have these 2 lines in /etc/httpd/httpd.conf:"
-    echo "        <Directory \"/Users/$user/Sites/\">"
-    echo "        AllowOverride All"
+    echo "    You should have these 3 lines in /etc/httpd/httpd.conf:"
+    echo '        <Directory "/Users/*/Sites/wipha">'
+    echo '            AllowOverride All'
+    echo '        </Directory>'
 fi
 
 
