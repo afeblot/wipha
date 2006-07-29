@@ -18,8 +18,12 @@
 {/if}{if $photos[$photoId].Comment ne ""}
     <div class="comment">{$photos[$photoId].Comment|escape}</div>
 {/if}
+{if $photos[$photoId].MediaType eq "Image"}
     <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?fs={$photoId}&amp;lib={$smarty.session.library.id}" target="_blank"><img src="skin/{#skin#}/zoom.gif" alt="zoom" title="Display the full size photo" /></a></div>
     <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?sl={$photoId}"><img src="skin/{#skin#}/slideshow.png" alt="slideshow" title="Slideshow mode" /></a></div>
+{else}
+    <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?vd={$photoId}&amp;lib={$smarty.session.library.id}" target="_blank"><img src="skin/{#skin#}/video.png" alt="view video" title="View video" /></a></div>
+{/if}
     <div class="date">{$photos[$photoId].Timestamp|date_format:"%d %b %Y, %H:%M:%S"}</div>        
 </div>
 {/table_foreach}

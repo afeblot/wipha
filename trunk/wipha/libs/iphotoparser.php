@@ -117,6 +117,8 @@ class IphotoParser {
     
     var $keywords;
 
+    var $version;
+
     var $archivePath;
 
     var $filesize;
@@ -134,7 +136,8 @@ class IphotoParser {
         $this->albums = array();
         $this->keywords = array();
         $this->levels = array();
-        // Create an XML parser
+        $this->version = "";
+       // Create an XML parser
         $this->xml_parser = xml_parser_create();
         // Set the functions to handle opening and closing tags
         xml_set_element_handler($this->xml_parser, array(&$this, "startElement"), array(&$this, "endElement"));
@@ -143,8 +146,9 @@ class IphotoParser {
     }
 
     //---------------------------------------------------------
-    // Parses a little bif os the file and returns the percentage parsed.
+    // Parses a little bif of the file and returns the percentage parsed.
     function parseLittle() {
+    
         $data = fread($this->fp, 4096);
        // Parse each 4KB chunk with the XML parser created above
        xml_parse($this->xml_parser, $data, feof($this->fp))
@@ -152,7 +156,9 @@ class IphotoParser {
            or die(sprintf("XML error: %s at line %d",  
                xml_error_string(xml_get_error_code($this->xml_parser)),  
                xml_get_current_line_number($this->xml_parser)));
-        if (empty($data) or feof($this->fp)) {
+
+        // If the version is known and is a bad one (before v4), stop parsing (return 100%)
+        if (empty($data) or feof($this->fp) or (!empty($this->version) and $this->version < "4.0.0")) {
             // Close the XML file
             fclose($this->fp);
             return 1.0;
@@ -177,6 +183,11 @@ class IphotoParser {
         $photos = $this->photos;
         $albums = $this->albums;
         $keywords = $this->keywords;
+    }
+
+    //---------------------------------------------------------
+    function getVersion() {
+        return $this->version;
     }
 
     //---------------------------------------------------------
@@ -231,6 +242,9 @@ class IphotoParser {
                                 switch($this->key) {
                                     case 'Archive Path':
                                         $this->archivePath = $this->content.'/';
+                                        break;
+                                    case 'Application Version':
+                                        $this->version = preg_replace('/\\s+.*/', '', $this->content);
                                         break;
                                 }
                                 break;
@@ -325,9 +339,9 @@ class IphotoParser {
                 switch ($name) {
                     case 'DICT':
                         $this->state = PARSER_IN_PHOTO_LIST;
-                        if (($this->photo['MediaType']=='Image')||(!isset($this->photo['MediaType']))) {
+// // //                         if (($this->photo['MediaType']=='Image')||(!isset($this->photo['MediaType']))) {
                             $this->photos[$this->photo['PhotoId']] = $this->photo;
-                        }
+// // //                         }
                         $this->photo = array();
                         //echo '------------------------------<br>';
                         break;

@@ -37,7 +37,7 @@ href="http://www.sixapart.com/pronet/articles/ydsf_-_robust_c.html">ydnar Drop-S
 produce my photos drop shadows.</li>
 
 <li><strong>Sam Stephenson</strong><br/> His <a href="http://prototype.conio.net">prototype</a>
-javascript library provides powerful features, to search elements in the DOM, send Ajax reqests
+javascript library provides powerful features, to search elements in the DOM, send Ajax requests
 easily and much more. Too bad that it's not well documented, making it really difficult to use.
 Some documentation available from <a
 href="http://www.sergiopereira.com/articles/prototype.js.html">Sergio Pereira</a>, <a

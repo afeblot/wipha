@@ -83,6 +83,7 @@ class Wipha {
         $this->versionCheck();
 
         $this->contentDisplayed('update');
+
     }
 
     //----------------------------------------------
@@ -95,7 +96,7 @@ class Wipha {
             $last = unserialize($ser);
             $last = $last['wipha'];
             $_SESSION['versionCheck'] = array('time'=>time());
-            if ($current<$last['ver']) {
+            if (version_compare($current, $last['ver'], "<")) {
                 $_SESSION['versionCheck']['newVer'] = $last;
             }
         }
@@ -163,7 +164,9 @@ class Wipha {
             return false;
         }
 
-        if (! $this->parseDataFile($libFile, $srcUrl)) {
+        set_time_limit(0); // No time limit during loading. Large lib may be loooonnnnng
+
+        if ( ! $this->parseDataFile($libFile, $srcUrl)) {
             return false;
         }
 
@@ -240,20 +243,24 @@ class Wipha {
         $_SESSION['library'] = $lib;
         $_SESSION['library']['path'] .= '/';
 
+        set_time_limit(30); // Restore standard value for the end of the script
         return true;
     }
 
     //----------------------------------------------
     function silentLoad() {
-        return ($_SESSION['browser']['app']=='W3C_VALIDATOR' || isset($_SERVER['PHP_AUTH_USER']));
+        return ( isset($_SESSION['browser']['no_interaction']) || isset($_SERVER['PHP_AUTH_USER']) );
     }
 
     //----------------------------------------------
     function parseDataFile($libFile, $srcUrl) {
         $parser =& new IphotoParser($libFile);
         $silent = $this->silentLoad() || empty($srcUrl);
+        $versionOk = true;
+        $version = "";
         if ( ! $silent) {
             $this->smarty->display('loading.tpl');
+            $this->smarty->assign('versionOk', $versionOk);
             $this->smarty->assign('percent', 0);
             $this->smarty->assign('nexturl', $srcUrl);
             $this->smarty->display('progress.tpl');
@@ -261,26 +268,32 @@ class Wipha {
             if (ob_get_length() === false) { ob_start(); }
             ob_flush(); flush();
         }
+
         $oldPercent = 0;
         do {
             $percent = $parser->parseLittle();
-            set_time_limit(5); // Give 5 sec more for each block --> don't limit parse time
-            // does not keep session accross diferrent calls -> no page reload possible
+            $version = $parser->getVersion();
+            if (!empty($version) and ($version<"4.0.0")) {
+                $versionOk = false;
+            }
+
             if ( ! $silent) {
-                if ($percent-$oldPercent>0.1 || $percent==1.0) {
+                if ($percent-$oldPercent>0.1 || $percent==1.0 || ! $versionOk) {
+                    $this->smarty->assign('versionOk', $versionOk);
+                    $this->smarty->assign('version', $version);
                     $this->smarty->assign('percent', ceil($percent*100));
                     $this->smarty->display('progress.tpl');
                     $oldPercent = $percent;
                     ob_flush(); flush();
                 }
             }
-        } while ($percent<1.0);
+        } while (($percent<1.0) and $versionOk);
         ob_end_flush();
-        set_time_limit(30); // Restore standard value for the end of the script
 
         $parser->getResults($_SESSION['photos'], $_SESSION['albums'], $_SESSION['keywords']);
         $parser->free();
-        return true;
+
+        return $versionOk;
     }
 
     //----------------------------------------------
@@ -497,6 +510,8 @@ class Wipha {
 
     //----------------------------------------------
     function filterPhotos($album, $pattern, $searchType, $period, $keywords, $kwSearchType) {
+        set_time_limit(0); // No time limit during loading. Large lib may be loooonnnnng
+
         $photoIdsSelected = $this->albumAuthorized($album);
         // Then apply the text grep
         $this->photosFilterOnComments($photoIdsSelected, $pattern, $searchType);
@@ -506,6 +521,8 @@ class Wipha {
         $this->photosFilterOnKeywords($photoIdsSelected, $keywords, $kwSearchType);
         // and sort by time
         usort($photoIdsSelected, array(&$this, "cmpPhotoTimestamp"));
+        
+        set_time_limit(30); // Restore standard value for the end of the script
         return $photoIdsSelected;
     }
 
@@ -569,7 +586,20 @@ class Wipha {
         sendImage($path, 21600, $transfoParams);
     }
 
-    //----------------------------------------------
+     //----------------------------------------------
+    function sendVideo($photoId) {
+        $this->checkForLibrary();
+
+        // security check
+        if ( ! $this->isAuthorizedPhoto($photoId)) {
+            die ("Not authorized to view this video.");
+        }
+
+        $path = $_SESSION['library']['path'].$_SESSION['photos'][$photoId]['ImagePath'];
+        sendVideo($path, 21600);
+    }
+
+   //----------------------------------------------
     function sendThumb($photoId) {
         $this->checkForLibrary();
 
@@ -1253,7 +1283,7 @@ class Wipha {
         $this->smarty->display('help.tpl');
     }
 //=================== PHOTOCAST SECTION ===========================
-// These functions don't require a lib to be loaded
+// These functions can be used without a loaded lib
 
     //----------------------------------------------
     function photocast($libId, $albumId) {

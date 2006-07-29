@@ -40,6 +40,8 @@ require_once('libs/http-conditional.php');
 //----------------------------------------------
 function _get_browser() {
     $browser = array ( //reversed array
+    "CURL",
+    "WGET",
     "W3C_VALIDATOR",
     "OPERA",
     "MSIE",            // parent
@@ -65,6 +67,11 @@ function _get_browser() {
             break; // first match wins
         }
     }
+    if ($info['app']=='W3C_VALIDATOR' ||
+        $info['app']=='CURL' ||
+        $info['app']=='WGET') {
+        $info['no_interaction'] = TRUE;
+    }
 
     return $info;
 }
@@ -84,6 +91,7 @@ function _readfile($file) {
 
 //----------------------------------------------
 function reloadUrl($url) {
+    session_write_close();
     header('Location: '.absUrl($url));
 }
 
@@ -236,9 +244,66 @@ function sendImage($path, $cacheTime, $transfoParams=NULL) {
         $path = $cached;   
     }
 
+    session_write_close();
+    
     header("Content-Type: image/jpeg");
     if ( ! httpConditional(filemtime($path), $cacheTime, 0, false, false, false)) {
         header("Content-Length: " . filesize($path));
+        _readfile($path);
+    }
+    exit;
+}
+
+//----------------------------------------------
+function videoMimetype($file) {
+    $mimes = array(
+        'quicktime' => 'mov,qt',
+        'x-msvideo' => 'avi,vfw',
+        'mp4'       => 'mp4,mpg4',
+        'x-mpeg'    => 'mpeg,mpg,m1s,m1v,m1a,m75,m15,mp2,mpm,mpv,mpa',
+        'divx'      => 'divx,div',
+        'x-ms-asf'  => 'asf',
+        'x-ms-wmv'  => 'wmv',
+        'x-ms-wm'   => 'wm',
+        'x-ms-wmp'  => 'wmp',
+        'flc'       => 'flc,fli',
+        '3gpp'      => '3gp,3gpp',
+        '3gpp2'     => '3g2,3gp2',
+        'sd-video'  => 'sdv',
+        'x-m4v'     => 'm4v'
+    );
+    
+    if (strrchr($file, ".")!==FALSE) {
+        $extension = strtolower(array_pop(explode(".", $file)));
+        foreach ($mimes as $mime=>$exts) {
+            if (preg_match("/\\b$extension\\b/", $exts)) {
+                return "video/$mime";
+            }
+        }
+    }
+    return "video/unknown";
+}
+
+//----------------------------------------------
+function sendVideo($path, $cacheTime) {
+    $path = getMacAliasOriginal($path, $error);
+    if ( ! isset($path)) {
+        die($error);
+    }
+    if ( ! file_exists($path)) {
+        die("Sorry, Can't find file '$path' (or is it a higher directory permission issue?)");
+    }
+    if ( ! is_readable($path)) {
+        die("Sorry, file '$path' is not readable (permission issue)");
+    }
+    
+    session_write_close();
+    
+    $mimetype = videoMimetype($path);
+    header("Content-Type: $mimetype");
+    if ( ! httpConditional(filemtime($path), $cacheTime, 0, false, false, false)) {
+        header("Content-Length: " . filesize($path));
+        //header('Content-Disposition: attachment; filename="' . basename($path) .'"');
         _readfile($path);
     }
     exit;
