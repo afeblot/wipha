@@ -1,0 +1,19 @@
+#!/bin/bash
+
+install_script="$1"
+installerName="$2"
+tbz="$3" # the tar.bz2 of the php application
+version="$4"
+
+rm -rf "$installerName"
+
+/usr/local/bin/platypus \
+    -a "Web iPhoto Access installer" \
+    -o "TextWindow" \
+    -i "build_resources/wipha.icns" \
+    -f "$(pwd)/$tbz" \
+    -V "$version" \
+    -A \
+    -R \
+    "$install_script" \
+    "$installerName"

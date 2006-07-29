@@ -1,0 +1,108 @@
+/*----------------------- ALSO FOR WIPHA DOCUMENTATION -----------------------*/
+
+.help {
+    font-family: Verdana;
+    margin-left:auto;
+    margin-right:auto;
+    max-width:700px;
+    text-align:justify;
+}
+
+div.note {
+    border: 1px solid #f8f8d0;
+    border-left: 2px solid #ff0;
+    background-color: #ffd;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    display: block;
+    text-align:justify;
+}
+
+div.note:before {
+    text-decoration: underline;
+    margin-bottom: 5px;
+    content: "Note:";
+    display: block;
+}
+
+div.warn {
+    border: 1px solid #fcc;
+    border-left: 2px solid #f00;
+    background-color: #fdd;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    display: block;
+    text-align:justify;
+}
+
+div.warn:before {
+    color: #f00;
+    margin-bottom: 5px;
+    text-decoration: underline;
+    content: "Warning:";
+    display: block;
+}
+
+kbd {
+   padding: 0px 2px 0px 2px;
+   border-width: 1px 2px 2px 1px;
+   border-style: solid;
+   border-color: #edd #baa #baa #eed;
+   background: #faf6f6;
+   color: #000;
+}
+
+.image {
+    text-align: center;
+    margin-top:30px;
+    margin-bottom:20px;
+}
+
+table.indent {
+    margin:10px;
+    margin-left:20px;
+}
+
+h1 {
+    text-align:center;
+}
+
+h2 {
+    margin-top:50px;
+}
+
+div.image p {
+    margin:0;
+}
+
+ul.credits li {
+    margin-bottom:10px;
+}
+
+li          { list-style-image:url(li_yel.gif);}
+li li       { list-style-image:url(li_green.gif); }
+ul.sum li:hover    { background-color: #e7e7e7; max-width:95%}
+ul.sum li li:hover { background-color: #e0e0e0; }
+ul.sum a:hover { color: #d50; }
+
+ul.sum {
+    background-color: #eee;
+    border: 1px solid #ddd;
+    border-left: 2px solid #bbb;
+    margin-top:40px;
+    margin-bottom:40px;
+    padding-top:10px;
+    padding-bottom:10px;
+    text-decoration:none;
+    font-family: Verdana;
+}
+ul.sum a {
+    text-decoration:none;
+    color:#000;
+}

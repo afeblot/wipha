@@ -1,0 +1,208 @@
+#!/bin/sh
+
+log=/tmp/wipha.log
+
+function test_error() {
+    if [ $1 != "0" ]; then
+        cat $log
+        echo "... Abort ..."
+        exit 1
+    fi
+}
+
+# Script is run with admin privileges (sudo) -> whoami=root
+if [ -z "$USER" ]; then
+    if [ -z "$LOGNAME" ]; then
+        echo "Can't determine user (no USER or LOGNAME variable)"
+        exit 1;
+    else
+        user=$LOGNAME
+    fi
+else
+    user=$USER
+fi
+
+home="/Users/$user"
+dest="$home/Sites"
+unique=$(date "+%d_%b_%Y-%H_%M_%S")
+
+if [ -e "$dest/wipha" ]; then
+    ver=$(awk -F\" '/version/ {print $2}' "$dest/wipha/configs/wipha.conf")
+    echo
+    echo "Detected WiPhA installed version: $ver"
+    if [ -e "$dest/wipha/data" ] && [[ "$ver" > "0.7" ]]; then
+        echo
+        echo "Saving previous WiPhA data"
+        mv "$dest/wipha/data" "/tmp/data_$unique" 2> $log
+	    test_error $?
+    else
+        echo
+        echo "Your previous preferences are too different from the current version preferences and won't be saved. Sorry."
+    fi
+
+    echo
+    echo "Moving old version of WiPhA to the trash"
+    mv "$dest/wipha" "$home/.Trash/wipha_$unique" 2> $log
+	test_error $?
+fi
+
+echo
+echo "Decompacting WiPhA in your Sites folder ($dest)"
+cd $dest
+tar jxf "$1/Contents/Resources/wipha.tbz" 2> $log
+test_error $?
+
+echo
+echo "Setting permissions on these files"
+own=$(id -ur)
+chown -Rh $own wipha 2> $log
+test_error $?
+grp=$(id -gr)
+chgrp -Rh $grp wipha 2> $log
+test_error $?
+find wipha -type f | xargs -I @ chmod 644 "@"
+find wipha -type d | xargs -I @ chmod 755 "@"
+find wipha | xargs -I @ touch "@"   # force the browser cache to reload
+
+echo
+echo "Setting setuid bit ($user) on permission corrector executable"
+# 4755 = -rwsr-xr-x (755 + setuid)
+chmod 4755 wipha/changeperm 2> $log
+test_error $?
+
+if [ -e "/tmp/data_$unique" ]; then
+    echo
+    echo "Installing your previous wipha data"
+    mv "$dest/wipha/data" "/tmp/data_empty_$unique" 2> $log
+    test_error $?
+    mv "/tmp/data_$unique" "$dest/wipha/data" 2> $log
+    test_error $?
+    rm -r "/tmp/data_empty_$unique"
+    rm -f "$dest/wipha/data/cache/*.jpg"
+fi
+
+cd wipha
+
+echo
+echo "Grant write access to Apache on the WiPhA data directories"
+# 3777 = drwxrwsrwt (777 + setgid + sticky)
+chmod 3777 data 2> $log
+test_error $?
+chmod 3777 data/cache 2> $log
+test_error $?
+
+echo
+echo "Configuring Apache to handle php"
+awk ' \
+/[ \t]*#[ \t]*LoadModule[ \t]+php4_module/ {print "# Following line uncommented by WiPha installer"; print "LoadModule php4_module", $3; next} \
+/[ \t]*#[ \t]*AddModule[ \t]+mod_php4.c/ {print "# Following line uncommented by WiPha installer"; print "AddModule mod_php4.c"; next} \
+{print $0} \
+' /etc/httpd/httpd.conf 1> /tmp/httpd.conf 2>$log
+test_error $?
+if [ "$(diff /etc/httpd/httpd.conf /tmp/httpd.conf)" != "" ]; then
+    mv /etc/httpd/httpd.conf /etc/httpd/httpd.conf.bak_WiPha_$(date "+%d_%b_%Y-%H:%M:%S")  2>$log
+    test_error $?
+    mv /tmp/httpd.conf /etc/httpd/httpd.conf  2>$log
+    test_error $?
+else
+    rm /tmp/httpd.conf
+	echo "    Was already done"
+fi
+
+echo
+echo "Configuring Apache to use local .htaccess for user $user"
+userconf="/etc/httpd/users/$user.conf"
+if [ -e "$userconf" ]; then
+    awk ' \
+    /[ \t]*AllowOverride[ \t]+None/ {print "    # Following line modified by WiPha installer (None -> All)"; print "    AllowOverride All"; next} \
+    {print $0} \
+    ' $userconf 1> /tmp/user.conf 2>$log
+    test_error $?
+	if [ "$(diff $userconf /tmp/user.conf)" != "" ]; then
+        mv $userconf $userconf.bak_WiPha_$(date "+%d_%b_%Y-%H:%M:%S")  2>$log
+        test_error $?
+        mv /tmp/user.conf $userconf  2>$log
+        test_error $?
+    else
+        rm /tmp/user.conf
+	    echo "    Was already done"
+    fi
+else
+	echo "    Creating the user Apache configuration file"
+	cat << EOF 1> $userconf 2> $log
+# Created by the WiPha installer (why hasn't it be created by OSX at user creation???)
+<Directory "/Users/$user/Sites/">
+    Options Indexes MultiViews
+    # Following line modified by WiPha installer (None -> All)
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+</Directory>
+EOF
+    test_error $?
+fi
+
+
+rm $log
+
+################################## TEST PART ################################
+echo
+echo "Checks..."
+echo
+
+err=0
+
+echo -n "'sips': "
+if [ -x "/usr/bin/sips" ]; then echo "ok"; else echo "KO ! (sips is required for the slideshow mode)"; err=1; fi
+
+echo -n "'data' permission is drwxrwsrwt: "
+stat=$(stat -f %Sp data)
+if [ "$stat" == "drwxrwsrwt" ]; then echo "ok"; else echo "KO ! ($stat)"; err=1; fi
+
+echo -n "'data/cache' permission is drwxrwsrwt: "
+stat=$(stat -f %Sp data/cache)
+if [ "$stat" == "drwxrwsrwt" ]; then echo "ok"; else echo "KO ! ($stat)"; err=1; fi
+
+echo -n "'changeperm' permission is -rwsr-xr-x: "
+stat=$(stat -f %Sp changeperm)
+if [ "$stat" == "-rwsr-xr-x" ]; then echo "ok"; else echo "KO ! ($stat)"; err=1; fi
+
+echo -n "OSX Standard PHP4 enabled: "
+load=$(grep -c -E "^[ \t]*LoadModule[ \t]+php4_module[ \t]+libexec/httpd/libphp4.so" /etc/httpd/httpd.conf)
+add=$(grep -c -E "^[ \t]*AddModule[ \t]+mod_php4.c" /etc/httpd/httpd.conf)
+if [ "$load" == "1" ] && [ "$add" == "1" ]; then echo "ok (unless other PHP versions also installed)"; else
+    echo "KO !"; err=1
+    echo "    You should have these 2 lines in /etc/httpd/httpd.conf:"
+    echo "        LoadModule php4_module libexec/httpd/libphp4.so"
+    echo "        AddModule mod_php4.c"
+fi
+
+echo -n "Updated Apache user config: "
+# location=$(grep -c -E "^[ \t]*Directory[ \t]+\"/Users/$user/Sites\"" /etc/httpd/users/$user.conf)
+location=$(grep -c -E "^[ \t]*<Directory[ \t]+\"/Users/$user/Sites/\"" /etc/httpd/users/$user.conf)
+override=$(grep -c -E "^[ \t]*AllowOverride[ \t]+All" /etc/httpd/users/$user.conf)
+if [ "$override" == "1" ] && [ "$location" == "1" ]; then echo "ok (probably)"; else
+    echo "KO !"; err=1
+    echo "    You should have these 2 lines in /etc/httpd/httpd.conf:"
+    echo "        <Directory \"/Users/$user/Sites/\">"
+    echo "        AllowOverride All"
+fi
+
+
+################################## START ################################
+if [ "$err" == "1" ]; then
+    echo
+    echo "Please correct this before using WiPhA."
+else
+    echo
+    echo "Installation complete"
+    echo
+    echo
+    echo "Re-starting Apache server"
+    /usr/sbin/apachectl restart  2> $log 1>/dev/null
+    test_error $?
+    sleep 5
+
+    echo "Your browser should now open the WiPha login page (please bookmark this page for future use)."
+    open "http://localhost/~$user/wipha"
+fi
