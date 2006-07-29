@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# more /System/Library/CoreServices/ServerVersion.plist
+# /System/Library/CoreServices/ServerVersion.plist
 
 log=/tmp/wipha.log
 date=$(date "+%d_%b_%Y-%H:%M:%S")
@@ -136,13 +136,13 @@ fi
 
 echo
 echo "Configuring Apache to take wipha access protection in account (.htaccess)"
-perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"/Users/\*/Sites/wipha">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' /etc/httpd/httpd.conf
+perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"'$dest/wipha'">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' /etc/httpd/httpd.conf
 if [ "$?" != "1" ]; then
     backupOnce /etc/httpd/httpd.conf
     cat << EOF 1>> /etc/httpd/httpd.conf 2> $log
 
 # Following lines added by WiPha installer to take wipha .htaccess into account
-<Directory "/Users/*/Sites/wipha">
+<Directory "$dest/wipha">
     AllowOverride All
 </Directory>
 EOF
@@ -187,11 +187,11 @@ if [ "$load" == "1" ] && [ "$add" == "1" ]; then echo "ok (unless other PHP vers
 fi
 
 echo -n "WiPhA access protection enabled (.htaccess): "
-perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"/Users/\*/Sites/wipha">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' /etc/httpd/httpd.conf
+perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"'$dest/wipha'">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' /etc/httpd/httpd.conf
 if [ "$?" == "1" ]; then echo "ok"; else
     echo "KO !"; err=1
     echo "    You should have these 3 lines in /etc/httpd/httpd.conf:"
-    echo '        <Directory "/Users/*/Sites/wipha">'
+    echo '        <Directory "'$dest/wipha'">'
     echo '            AllowOverride All'
     echo '        </Directory>'
 fi
