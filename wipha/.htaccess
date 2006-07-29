@@ -1,0 +1,40 @@
+<Files .htaccess>
+   order allow,deny
+   deny from all
+</Files>
+
+<Files AlbumData.xml>
+   order allow,deny
+   deny from all
+</Files>
+
+<Files ~ "\.ser$">
+   order allow,deny
+   deny from all
+</Files>
+
+<Files ~ "\.dat$">
+   order allow,deny
+   deny from all
+</Files>
+
+<Files ~ "\.tpl$">
+   order allow,deny
+   deny from all
+</Files>
+
+<Files ~ "\.conf$">
+   order allow,deny
+   deny from all
+</Files>
+
+Options -Indexes
+
+
+# Used for PHPs running as cgi rather than apache module
+# uncomment these lines on a linux server if the photocast basic http auth doesn't work
+#
+#<IfModule mod_rewrite.c>
+#	RewriteEngine on
+#	RewriteRule .* - [E=REMOTE_USER:%{HTTP:Authorization},L]
+#</IfModule>
