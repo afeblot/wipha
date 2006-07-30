@@ -1,6 +1,6 @@
 VER=$(shell awk -F\" '/version/ {print $$2}' wipha/configs/wipha.conf)
 DMG=WiPhA_v$(VER).dmg
-INSTALLER=dmgContent/WiPha\ Installer.app
+INSTALLER=dmgContent/WiPhA\ Installer.app
 TBZ=wipha.tbz
 INSTALL_SCRIPT=install_script
 PERM=wipha/changeperm
@@ -14,7 +14,6 @@ $(DMG): $(INSTALLER) help
 
 $(INSTALLER): $(INSTALL_SCRIPT) build_installer $(TBZ)
 	./build_installer $(INSTALL_SCRIPT) "$@" $(TBZ) "$(VER)"
-	@ cp $(TBZ) $(INSTALLER)/Contents/Resources # Corrects a Platypus bug: the file is not bundled
 
 $(TBZ): $(PERM) FORCE
 	@ cp build_resources/LICENSE.txt wipha/
@@ -30,7 +29,7 @@ $(VER): wipha/configs/wipha.conf
 
 wipha/% : %.c
 	@ echo "Build $@" ; \
-	gcc -Wall -o "$@" "$<" ; chmod 4755 "$@"
+	gcc -Wall -arch i386 -arch ppc -o "$@" "$<" ; chmod 4755 "$@"
 
 HELP_FILES=install.html \
            admin.html \
