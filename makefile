@@ -18,6 +18,7 @@ $(INSTALLER): $(INSTALL_SCRIPT) build_installer $(TBZ)
 $(TBZ): $(PERM) FORCE
 	@ cp build_resources/LICENSE.txt wipha/
 	tar jcf "$@" wipha \
+        --exclude ".svn" \
         --exclude "wipha/test.*" \
         --exclude "wipha/data/*.ser" \
         --exclude "wipha/data/*.dat" \
@@ -29,7 +30,7 @@ $(VER): wipha/configs/wipha.conf
 
 wipha/% : %.c
 	@ echo "Build $@" ; \
-	gcc -Wall -arch i386 -arch ppc -o "$@" "$<" ; chmod 4755 "$@"
+	gcc -Wall -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -o "$@" "$<" ; chmod 4755 "$@"
 
 HELP_FILES=install.html \
            admin.html \
