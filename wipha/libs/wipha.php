@@ -653,7 +653,7 @@ class Wipha {
         $this->smarty->assign('state', ($time>0) ? "playing" : "paused");
         $this->smarty->assign_by_ref('download', $_SESSION['albums']['download']['PhotoIds']);
         $this->smarty->assign('albumDisplayed', $_SESSION['lastSearch']['album']);    // for photocast in header.tpl
-        $this->smarty->assign('prefetch', $_SERVER['SCRIPT_NAME']."?ph=".$nextId);
+        $this->smarty->assign('prefetch', $_SERVER['SCRIPT_NAME']."?ph=".$nextId."&amp;lib=".$_SESSION['library']['id']);
         $this->smarty->display('slideshow.tpl');
         
         $this->contentDisplayed('set');
