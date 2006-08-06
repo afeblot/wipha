@@ -208,6 +208,21 @@ function isOnGlobsOrg() {
 }
 
 //----------------------------------------------
+function controlCacheSize($maxCacheSize) {
+    $cacheSize = exec("du -ks data/cache | cut -f 1")*1024;
+    if ($cacheSize==0 || ! is_numeric($maxCacheSize)) { return; } // Security
+    if ($cacheSize>$maxCacheSize) {
+        $listFileInfos = array();
+        exec("\\ls -ltr data/cache| awk '/jpg$/ {print $9 \",\" $5}'", &$listFileInfos);
+        while ((list ($key, $fileInfo) = each($listFileInfos)) && ($cacheSize>$maxCacheSize)) {
+            list($file, $size) = explode(",", $fileInfo);
+            $cacheSize -= $size;
+            unlink ("data/cache/$file");
+        }
+    }
+}
+
+//----------------------------------------------
 // $transfoParams = array('maxWidth'=>xx, ...)
 //     maxWidth
 //     maxHeight
@@ -240,6 +255,7 @@ function sendImage($path, $cacheTime, $transfoParams=NULL) {
             $cmd = $fnctCmd($path, $args, $cached);
             @exec($cmd);
             chmod($cached, 0664);
+            controlCacheSize($transfoParams['cachesize']);
         }
         $path = $cached;   
     }

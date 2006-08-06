@@ -606,6 +606,9 @@ class Wipha {
         if ( isset($maxWidth) || isset($maxHeight)) {
             $transfoParams = array('maxWidth'=>$maxWidth, 'maxHeight'=>$maxHeight, 'ratio'=>$ratio, 'quality'=>'50');
         }
+        $this->smarty->config_load('wipha.conf');
+        $transfoParams['cachesize'] = $this->smarty->get_config_vars('cachesize');
+
         sendImage($path, 21600, $transfoParams);
     }
 
@@ -1371,7 +1374,10 @@ class Wipha {
 
         $path = $lib['path'].'/'.base64_decode($path);
         
-        sendImage($path, 43200, $compress ? array('quality'=>'40') : NULL);
+        $this->smarty->config_load('wipha.conf');
+        $cacheSize = $this->smarty->get_config_vars('cachesize');
+        sendImage($path, 43200, $compress ? array('quality'=>'40',
+                                                  'cachesize'=>$cacheSize) : NULL);
     }
 
     //----------------------------------------------
