@@ -178,11 +178,6 @@ function togglePhotoSelection(elt) {
 }
 
 //-----------------------------------------------------------------------------
-function unselectAll() {
-    sendAjax("act=del&id=all", updateNbSelected);
-}
-
-//-----------------------------------------------------------------------------
 function changeAllFromPage(tdClass, action) {
     elts=document.getElementsByClassName("photo");
     var ids = new Array();
@@ -224,7 +219,6 @@ function stopSlideshow() {
     Element.addClassName(nodes[0], "paused");
     
 }
-
 
 //=============================================================================
 var myrules = {

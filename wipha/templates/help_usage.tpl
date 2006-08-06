@@ -157,6 +157,13 @@ mode.</p>
 <img src="img/photopage.jpg" alt="Photos Page"/>
 </div>
 
+<div class="note"> If you enlarge your browser window, the thumb page will use that extra space
+<em>(you need to refresh the page)</em>.
+<div class="image">
+<img src="img/sixcol.jpg" alt="Six columns thumb page"/>
+</div>
+</div>
+
 <a name="slide"><h3>Slideshow mode</h3></a>
 
 <p>In this mode, you can display the photos you found from your search parameters at a larger size

@@ -3,7 +3,7 @@
 <a href="#" id="unselectAll" class="perm">Unselect all</a><br/>
 {include file="pager.tpl" }
 
-{table_foreach from=$photoIds item="photoId" cols=3 trailpad=""
+{table_foreach from=$photoIds item="photoId" cols=$nbCols trailpad=""
                table_attr='border="0" cellspacing="10" cellpadding="0" align="center"'
                td_attr=$photoIds|is_in_array:$download:'class="selected"'|cat:'align="center" valign="bottom"'
 }
@@ -28,7 +28,7 @@
 </div>
 {/table_foreach}
 
-{if $photoIds|@count > 6}
+{if $selectedNbRows > 2}
     {include file="pager.tpl" }
 {/if}
 

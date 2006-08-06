@@ -82,10 +82,10 @@ if (count($get)>0) {
         case array('logout'):
             $action = 'logout';
             break;        
-        case array('al', 'kw', 'kwst', 'per',        'ps', 'sp', 'st'):
-        case array('al', 'kw', 'kwst', 'per', 'pos', 'ps', 'sp', 'st'):
-        case array('al',       'kwst', 'per',        'ps', 'sp', 'st'):
-        case array('al',       'kwst', 'per', 'pos', 'ps', 'sp', 'st'):
+        case array('al', 'kw', 'kwst', 'per',        'row', 'sp', 'st'):
+        case array('al', 'kw', 'kwst', 'per', 'pos', 'row', 'sp', 'st'):
+        case array('al',       'kwst', 'per',        'row', 'sp', 'st'):
+        case array('al',       'kwst', 'per', 'pos', 'row', 'sp', 'st'):
             $action = 'search';
             break;        
         case array('fs'):
@@ -127,7 +127,7 @@ switch($action) {
         break;
     case 'search':
         $wipha->displaySelectedPhotos($_GET['al'], $_GET['sp'], $_GET['st'], $_GET['pos'],
-                                      $_GET['ps'], $_GET['per'], $_GET['kw'], $_GET['kwst']);
+                                      $_GET['row'], $_GET['per'], $_GET['kw'], $_GET['kwst']);
         break;
     case 'download':
         $wipha->downloadPhotos($_GET['dld']);
