@@ -48,12 +48,12 @@ class Wipha {
 
     var $smarty = null;
     var $filterParam = ''; // to communicate with the array_filter callback which has no parameter
-    var $availablePageSizes = null;
+    var $availableNbRows = null;
     var $availableSearchTypes = null;
     var $availableKwSearchTypes = null;
     //----------------------------------------------
     function Wipha(&$get) {
-        $this->availablePageSizes = array(15, 30, 60, 120);
+        $this->availableNbRows = array(2, 3, 4, 5, 10, 20, 30, 50);
         $this->availableSearchTypes = array('l'=>'All words',
                                             'y'=>'Any word',
                                             'r'=>'<a href="http://www.itlab.musc.edu/docs/perl_regexp/" target="_blank">Regexp</a> (perl style)'
@@ -83,7 +83,6 @@ class Wipha {
         $this->versionCheck();
 
         $this->contentDisplayed('update');
-
     }
 
     //----------------------------------------------
@@ -359,7 +358,7 @@ class Wipha {
     }
 
     //----------------------------------------------
-    function assignSearchFormInfos($album=NULL, $pattern=NULL, $searchType=NULL, $pageSize=NULL,
+    function assignSearchFormInfos($album=NULL, $pattern=NULL, $searchType=NULL, $nbRows=NULL,
                                    $period=NULL, $keywords=NULL, $kwSearchType=NULL) {
         // Get a list of all authorized albums
         $users =& new Users();
@@ -404,10 +403,17 @@ class Wipha {
             }
         }
 
+        $nbCols = $this->nbThumbCols();
+        $availablePageSizes = array();
+        foreach($this->availableNbRows as $rn) {
+            array_push($availablePageSizes, $rn*$nbCols);
+        }
+
         $this->smarty->assign_by_ref('albums', $albums);
         $this->smarty->assign('selectedAlbum', $album ? $album : 'all');    // 'all' doesn't exist for admin -> fallback to 1st = Phototheque
-        $this->smarty->assign('pageSizes', $this->availablePageSizes);
-        $this->smarty->assign('selectedPageSize', $pageSize ? $pageSize : $this->availablePageSizes[0]);
+        $this->smarty->assign('nbRows', $this->availableNbRows);
+        $this->smarty->assign('pageSizes', $availablePageSizes);
+        $this->smarty->assign('selectedNbRows', $nbRows ? $nbRows : $this->availableNbRows[1]);
         $this->smarty->assign('searchTypes', $this->availableSearchTypes);
         $this->smarty->assign('selectedSearchType', $searchType ? $searchType : 'l');
         $this->smarty->assign('pattern', $pattern);
@@ -527,19 +533,33 @@ class Wipha {
     }
 
     //----------------------------------------------
-    function displaySelectedPhotos($album, $pattern, $searchType, $pos, $pageSize, $period, $keywords, $kwSearchType) {
+    function storeBrowserSize($width) {
+        $_SESSION['browser']['width'] = $width;
+    }
+
+    //----------------------------------------------
+    function nbThumbCols() {
+        // thumb width:240, table cell: 270, 10 between 2 cells, 10 at the beginning an at the enc
+        return max(3, floor(($_SESSION['browser']['width']-10)/280));
+    }
+
+    //----------------------------------------------
+    function displaySelectedPhotos($album, $pattern, $searchType, $pos, $nbRows, $period, $keywords, $kwSearchType) {
         $this->checkForLibrary();
         $pattern = stripslashes($pattern);
         $_SESSION['lastSearch'] = array('album'=>$album, 'pattern'=>$pattern,
                                         'searchType'=>$searchType, 'pos'=>$pos,
-                                        'pageSize'=>$pageSize, 'period'=>$period,
+                                        'nbRows'=>$nbRows, 'period'=>$period,
                                         'keywords'=>$keywords, 'kwSearchType'=>$kwSearchType);
 
         $photoIdsSelected = $this->filterPhotos($album, $pattern, $searchType, $period, $keywords, $kwSearchType);
         $this->smarty->assign('nbPhotos', count($photoIdsSelected));
         
-        $pageSize = min($pageSize, max($this->availablePageSizes));
-        $pageSize = max($pageSize, min($this->availablePageSizes));
+        $nbRows = min($nbRows, max($this->availableNbRows));
+        $nbRows = max($nbRows, min($this->availableNbRows));
+
+        $nbCols = $this->nbThumbCols();
+        $pageSize = $nbCols*$nbRows;
 
         // $pos<0: then -pos is a photoId from the slidehsow mode -> Let's find the right page
         if (empty($pos)) {
@@ -554,15 +574,18 @@ class Wipha {
         $this->smarty->assign('posEnd', min($pos+$pageSize, count($photoIdsSelected)));
         $this->smarty->assign('nbSelected', count($photoIdsSelected));
 
+
+
         // Only pass a page of photos
         $photoIdsSelected = array_slice($photoIdsSelected, $pos, $pageSize);
-
         
-        $this->assignSearchFormInfos($album, $pattern, $searchType, $pageSize, $period, $keywords, $kwSearchType);
+        $this->assignSearchFormInfos($album, $pattern, $searchType, $nbRows, $period, $keywords, $kwSearchType);
         $this->smarty->assign_by_ref('photos', $_SESSION['photos']);
         $this->smarty->assign_by_ref('photoIds', $photoIdsSelected);
         $this->smarty->assign_by_ref('download', $_SESSION['albums']['download']['PhotoIds']);
         $this->smarty->assign('albumDisplayed', $album);    // for photocast in header.tpl
+        $this->smarty->assign('nbCols', $nbCols);
+        $this->smarty->assign('selectedPageSize', $pageSize);
         $this->smarty->display('results.tpl');
         
         $this->contentDisplayed('set');
@@ -626,7 +649,7 @@ class Wipha {
         }
 
         $ls =& $_SESSION['lastSearch'];
-        $this->assignSearchFormInfos($ls['album'], $ls['pattern'], $ls['searchType'], $ls['pageSize'], $ls['period'], $ls['keywords'], $ls['kwSearchType']);
+        $this->assignSearchFormInfos($ls['album'], $ls['pattern'], $ls['searchType'], $ls['nbRows'], $ls['period'], $ls['keywords'], $ls['kwSearchType']);
         $photoIdsSelected = $this->filterPhotos($ls['album'], $ls['pattern'], $ls['searchType'], $ls['period'], $ls['keywords'], $ls['kwSearchType']);
         $nbSelected = count($photoIdsSelected);
         $pos = array_search($photoId, $photoIdsSelected);

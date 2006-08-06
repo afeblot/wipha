@@ -16,6 +16,14 @@
         <script type="text/javascript" src="3rdParty/PHP_Serializer.js"></script>
         <script type="text/javascript" src="libs/wipha.js"></script>
         <script type="text/javascript" src="libs/datemap.js"></script>
+{if ! empty($smarty.session.user)}
+        <script type="text/javascript">
+            <!--
+            var oldBrowserWidth = {if ! empty($smarty.session.browser.width)}{$smarty.session.browser.width}{else}0{/if};
+            -->
+        </script>
+        <script type="text/javascript" src="libs/browsersize.js"></script>
+{/if}
 {if ! empty($albumDisplayed) && $albumDisplayed != "download"}
         <link rel="alternate" title="WiPhA {$smarty.session.albums[$albumDisplayed].AlbumName}" href="photocast.php?lib={$smarty.session.library.id}&amp;al={$albumDisplayed}" type="application/rss+xml"/>
 {/if}
@@ -37,7 +45,7 @@
             <a href="main.php?sellib&amp;src=ref">Select Lib</a>
 {/if}
             <a href="main.php">New search</a>
-            <a href="main.php?help">Help</a>
+            <a href="main.php?help" target="_blank">Help</a>
 {if ! empty($albumDisplayed) && $albumDisplayed != "download"}
             <a href="photocast.php?lib={$smarty.session.library.id}&amp;al={$albumDisplayed}" class="photocast" title="{$smarty.session.albums[$albumDisplayed].AlbumName} album Photocast" target="_blank">&nbsp;&nbsp;&nbsp;&nbsp;</a>
 {/if}

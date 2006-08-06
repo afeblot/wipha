@@ -19,7 +19,7 @@
 {/if}
     <img class="logo" src="img/wipha.png" alt="WiPhA logo"/>
     {html_options name="al" options=$albums selected=$selectedAlbum}
-    {html_options name="ps" values=$pageSizes output=$pageSizes|cat:' photos' selected=$selectedPageSize}
+    {html_options name="row" values=$nbRows output=$pageSizes|cat:' photos' selected=$selectedNbRows}
     &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="submitsearch" value="Display"/>
     &nbsp;&nbsp;<a class="simple perm"href="#">Advanced</a><a class="advanced perm"href="#">Simple</a>
     &nbsp;&nbsp;&nbsp;&nbsp;<span class="nbDownload">{if ($download|@count) > 0 }<strong>{$download|@count}</strong> photo{if ($download|@count) > 1 }s{/if} to <a class="perm" href="main.php?dld">download</a>{/if}</span>

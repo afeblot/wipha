@@ -63,6 +63,9 @@ if (count($get)>0) {
         case array( '_', 'exif'):
             $action = 'exif';
             break;
+        case array( '_', 'brw'):
+            $action = 'browserSize';
+            break;
     }
 }
 $post = array_keys($_POST);
@@ -92,6 +95,9 @@ switch($action) {
         break;
     case 'exif':
         echo $wipha->exif($_GET['exif']);
+        break;
+    case 'browserSize':
+        echo $wipha->storeBrowserSize($_GET['brw']);
         break;
     default:
         echo "what ?";print_r($_GET);
