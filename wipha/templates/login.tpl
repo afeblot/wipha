@@ -37,24 +37,27 @@ Demo mode - administrator login/password: <tt>admin/admin</tt>
 <fieldset id="loginpanel" style="display:none;">
     <form action="{$smarty.server.SCRIPT_NAME}" method="post">
     <table border="0">
-        {if $error ne ""}
-            <tr>
-                <td class="error">
-                    {if $error eq "user_empty"}You must supply a user.
-                    {elseif $error eq "passwd_empty"} You must supply a password.
-                    {elseif $error eq "all_empty"} You must supply a user and a password.
-                    {elseif $error eq "bad_login"} Bad user or password.
-                    {/if}
-                </td>
-            </tr>
-        {/if}
+         <tr>
+            <td colspan="2" align="center">
+                <p>If you have no account, you can <a class="button" href="{$smarty.server.SCRIPT_NAME}?guest" class="perm">visit as Guest</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="error">
+                {if $error eq "user_empty"}You must supply a user.
+                {elseif $error eq "passwd_empty"} You must supply a password.
+                {elseif $error eq "all_empty"} You must supply a user and a password.
+                {elseif $error eq "bad_login"} Bad user or password.
+                {/if}
+            </td>
+        </tr>
         <tr>
             <td>Login:</td><td><input type="text" name="user" value="{$smarty.post.user}" /></td>
         </tr> <tr>
             <td>Password:</td> <td><input type="password" name="passwd" /></td>
         </tr> <tr>
-            <td colspan="2" align="center"><br/><input type="submit" value="Login" />
-                <p><br/><br/><em>If you have no account, you can</em> <a class="button" href="{$smarty.server.SCRIPT_NAME}?guest" class="perm">visit as Guest</a></p>
+            <td colspan="2" align="center">
+                <br/><input type="submit" value="Login" />
             </td>
         </tr>
     </table>
