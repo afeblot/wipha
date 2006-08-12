@@ -45,7 +45,7 @@ class Session {
         if (isset($name)) {
             // Create a session name which is different for each installed wipha
             session_name(md5(dirname($_SERVER['SCRIPT_FILENAME']))."-".$name);
-            session_start();
+             session_start();
             if ( ! isset($_SESSION['browser'])) {
                 $_SESSION['browser'] = _get_browser();
             }
@@ -62,9 +62,11 @@ class Session {
     //----------------------------------------------
     function destroy() {
         $_SESSION = array();
-        if (isset($_COOKIE[session_name()])) {
-            setcookie(session_name(), '', time()-42000, '/');
-        }
+        // if (isset($_COOKIE[session_name()])) {
+        //     // This should delete the cookie, but it doesn't, and a new one is created
+        //     // with the same name and same parameters (how is this possible ???)
+        //     setcookie(session_name(), '', 0, '/');
+        // }
         session_destroy();
     }
 }
