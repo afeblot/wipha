@@ -13,7 +13,7 @@
     -->
 </script>
 
-<form class="search {$smarty.session.searchbarType}" action="main.php" id="searchform{$cpt}" name="searchform{$cpt}" method="get" accept-charset="UTF-8">
+<form class="search {$smarty.cookies.searchbarType}" action="main.php" id="searchform{$cpt}" name="searchform{$cpt}" method="get" accept-charset="UTF-8">
 {if $posStart != '' && $nbSelected > 0}
 <div class="searchresults"><div><a href="{$mailurl}"><img src="skin/{#skin#}/mail.gif" title="Mail this page" alt="Mail"/></a> Photo{if $posEnd && ($nbSelected>1)}s{/if} <strong> {$posStart} </strong> {if $posEnd}- <strong> {$posEnd} </strong> {/if}of <strong> {$nbSelected} </strong></div></div>
 {/if}
