@@ -38,6 +38,16 @@ a img {
     border: none;
 }
 
+/*----------------------- LOGIN PANEL -----------------------*/
+#loginpanel p {
+    font-style: italic;
+    margin-bottom: 2em;
+}
+
+#loginpanel .error {
+    height: 2em;
+}
+
 /*----------------------- ADMIN SECTION -----------------------*/
 fieldset legend {
     font-size: 120%;
