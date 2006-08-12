@@ -16,14 +16,6 @@
         <script type="text/javascript" src="3rdParty/PHP_Serializer.js"></script>
         <script type="text/javascript" src="libs/wipha.js"></script>
         <script type="text/javascript" src="libs/datemap.js"></script>
-{if ! empty($smarty.session.user)}
-        <script type="text/javascript">
-            <!--
-            var oldBrowserWidth = {if ! empty($smarty.session.browser.width)}{$smarty.session.browser.width}{else}0{/if};
-            -->
-        </script>
-        <script type="text/javascript" src="libs/browsersize.js"></script>
-{/if}
 {if ! empty($albumDisplayed) && $albumDisplayed != "download"}
         <link rel="alternate" title="WiPhA {$smarty.session.albums[$albumDisplayed].AlbumName}" href="photocast.php?lib={$smarty.session.library.id}&amp;al={$albumDisplayed}" type="application/rss+xml"/>
 {/if}

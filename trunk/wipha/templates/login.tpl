@@ -49,13 +49,12 @@ Demo mode - administrator login/password: <tt>admin/admin</tt>
             </tr>
         {/if}
         <tr>
-            <td>Login:</td>
-            <td><input type="text" name="user" value="{$smarty.post.user}" /></td>
+            <td>Login:</td><td><input type="text" name="user" value="{$smarty.post.user}" /></td>
         </tr> <tr>
             <td>Password:</td> <td><input type="password" name="passwd" /></td>
         </tr> <tr>
             <td colspan="2" align="center"><br/><input type="submit" value="Login" />
-            <p>If you have no account, you can login as <a href="{$smarty.server.SCRIPT_NAME}?guest" class="perm">Guest</a></p>
+                <p><br/><br/><em>If you have no account, you can</em> <a class="button" href="{$smarty.server.SCRIPT_NAME}?guest" class="perm">visit as Guest</a></p>
             </td>
         </tr>
     </table>

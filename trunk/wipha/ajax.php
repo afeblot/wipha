@@ -57,14 +57,8 @@ if (count($get)>0) {
         case array( '_', 'alb', 'map'):
             $action = 'getDateInfo';
             break;
-        case array( '_', 'sbt'):
-            $action = 'searchbarType';
-            break;
         case array( '_', 'exif'):
             $action = 'exif';
-            break;
-        case array( '_', 'brw'):
-            $action = 'browserSize';
             break;
     }
 }
@@ -90,14 +84,8 @@ switch($action) {
     case 'getDateInfo':
         echo $wipha->getDateInfo($_GET['map'], $_GET['alb']);
         break;
-    case 'searchbarType':
-        $wipha->setSearchbarType($_GET['sbt']);
-        break;
     case 'exif':
         echo $wipha->exif($_GET['exif']);
-        break;
-    case 'browserSize':
-        echo $wipha->storeBrowserSize($_GET['brw']);
         break;
     default:
         echo "what ?";print_r($_GET);

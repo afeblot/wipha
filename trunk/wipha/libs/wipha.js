@@ -79,7 +79,7 @@ function toggleSearchType() {
             sbt = "simple";
         }
     }
-    sendAjax("sbt="+sbt, undefined);
+    document.cookie = 'searchbarType='+sbt+'; path=/'
 }
 
 //-----------------------------------------------------------------------------
@@ -219,6 +219,30 @@ function stopSlideshow() {
     Element.addClassName(nodes[0], "paused");
     
 }
+
+//=========================== BROWSER SIZE =============================
+
+//-----------------------------------------------------------------------------
+// from http://www.themaninblue.com/experiment/ResolutionLayout/
+function getBrowserWidth() {
+	if (window.innerWidth) {
+		return window.innerWidth;
+    } else if (document.documentElement && document.documentElement.clientWidth != 0) {
+		return document.documentElement.clientWidth;
+    } else if (document.body){
+        return document.body.clientWidth;
+    }
+	return 0;
+}
+
+//-----------------------------------------------------------------------------
+function storeBrowserSize(){
+    document.cookie = 'browserwidth='+getBrowserWidth()+'; path=/'
+}
+
+// These can't be registered with Behaviour
+window.onresize = storeBrowserSize;
+window.onfocus = storeBrowserSize;
 
 //=============================================================================
 var myrules = {

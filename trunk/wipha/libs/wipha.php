@@ -62,8 +62,11 @@ class Wipha {
     
         $this->smarty =& new SmartyApp();
 
-        if ( ! isset($_SESSION['photos'])) {
-            $this->setSearchbarType('simple');
+        if ( ! $_COOKIE['searchbarType']) {
+            setcookie('searchbarType', 'simple', 0, '/');
+        }
+        if ( ! $_COOKIE['nbRows']) {
+            setcookie('nbRows', $this->availableNbRows[1], time()+3600*24*365, '/');
         }
         
         // in session because used in header.tpl
@@ -360,6 +363,11 @@ class Wipha {
     //----------------------------------------------
     function assignSearchFormInfos($album=NULL, $pattern=NULL, $searchType=NULL, $nbRows=NULL,
                                    $period=NULL, $keywords=NULL, $kwSearchType=NULL) {
+
+        if ( ! empty($nbRows)) {
+            setcookie('nbRows', $nbRows, time()+3600*24*365, '/');
+        }
+
         // Get a list of all authorized albums
         $users =& new Users();
         if ($_SESSION['is_admin'] || $users->hasFullAccess($_SESSION['library']['id'], $_SESSION['user'])) {
@@ -413,7 +421,7 @@ class Wipha {
         $this->smarty->assign('selectedAlbum', $album ? $album : 'all');    // 'all' doesn't exist for admin -> fallback to 1st = Phototheque
         $this->smarty->assign('nbRows', $this->availableNbRows);
         $this->smarty->assign('pageSizes', $availablePageSizes);
-        $this->smarty->assign('selectedNbRows', $nbRows ? $nbRows : $this->availableNbRows[1]);
+        $this->smarty->assign('selectedNbRows', $nbRows ? $nbRows : $_COOKIE['nbRows']);
         $this->smarty->assign('searchTypes', $this->availableSearchTypes);
         $this->smarty->assign('selectedSearchType', $searchType ? $searchType : 'l');
         $this->smarty->assign('pattern', $pattern);
@@ -455,12 +463,6 @@ class Wipha {
             $body = $this->smarty->fetch('messagebody.tpl');
             $this->smarty->assign('mailurl', "mailto:?subject=".rawurlencode($albumName." Photos")."&amp;body=".rawurlencode($body));
         }
-    }
-
-    //----------------------------------------------
-    // "simple" or "advanced"
-    function setSearchbarType($earchbarType) {
-        $_SESSION['searchbarType'] = $earchbarType;
     }
 
     //----------------------------------------------
@@ -533,14 +535,9 @@ class Wipha {
     }
 
     //----------------------------------------------
-    function storeBrowserSize($width) {
-        $_SESSION['browser']['width'] = $width;
-    }
-
-    //----------------------------------------------
     function nbThumbCols() {
         // thumb width:240, table cell: 270, 10 between 2 cells, 10 at the beginning an at the enc
-        return max(3, floor(($_SESSION['browser']['width']-10)/280));
+        return max(3, floor(($_COOKIE['browserwidth']-10)/280));
     }
 
     //----------------------------------------------

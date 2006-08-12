@@ -44,7 +44,7 @@ class Session {
     function Session($name=NULL) {
         if (isset($name)) {
             // Create a session name which is different for each installed wipha
-            session_name(dirname($_SERVER['SCRIPT_FILENAME'])."-".$name);
+            session_name(md5(dirname($_SERVER['SCRIPT_FILENAME']))."-".$name);
             session_start();
             if ( ! isset($_SESSION['browser'])) {
                 $_SESSION['browser'] = _get_browser();
