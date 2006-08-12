@@ -74,7 +74,7 @@ still running.
 <ul>
     <li> Set different logins with different right access </li>
     <li> Web access and photocast albums are both protected (with the same logins)</li>
-    <li> No direct access to files (all datas are filtered before being delivered)</li>
+    <li> No direct access to files (all data are filtered before being delivered)</li>
 </ul>
 
 <a name="std"><h3>Standard compliant</h3></a>
@@ -90,8 +90,8 @@ still running.
     <li> Ajax technology used to limit bandwidth usage and get faster responses</li>
     <li> No need to have iPhoto running, or even to be logged in </li>
     <li> No background process will be installed in your account </li>
-    <li> WiPhA relies on the iPhoto datas (but doesn't modify them) as much as possible to avoid generating new thumb images </li>
-    <li> Generated datas are cached and reused. </li>
+    <li> WiPhA relies on the iPhoto data (but doesn't modify them) as much as possible to avoid generating new thumb images </li>
+    <li> Generated data are cached and reused. </li>
 </ul>
 
 
