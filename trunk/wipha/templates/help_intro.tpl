@@ -5,9 +5,9 @@
     <li><a href="#mean">MEAN</a></li>
     <li><a href="#key">KEY FEATURES</a>
         <ul>
-            <li><a href="#web">Full featured yet easy web access to your iPhoto Libraries</a></li>
+            <li><a href="#web">Full featured yet easy web access to your iPhoto Libraries, including movies</a></li>
             <li><a href="#phcast">Photocast your albums for free</a></li>
-            <li><a href="#exp">Export pictures</a></li>
+            <li><a href="#exp">Export pictures and movies</a></li>
             <li><a href="#priv">Enforce your privacy</a></li>
             <li><a href="#std">Standard compliant</a></li>
             <li><a href="#light">Light and fast</a></li>
@@ -21,13 +21,13 @@
 
 <a name="goal"><h2>GOAL: Share your iPhoto Libraries</h2></a>
 
-Share your iPhoto Libraries over the internet. As soon as you have uploaded pictures from
-your camera to your library, you want these pictures to get available to your friends,
-family or whoever. WiPhA provides a powerful, beautiful and easy to use <strong>web
-interface</strong> to your libraries as well as <strong>automatic photocast</strong> of
-every single album of yours. Moreover, people can easily <strong>download a bunch of
-pictures</strong> and import them in their own iPhoto library with your captions and
-comments (for your lucky friends also owning a mac).<br/>
+Share your iPhoto Libraries over the internet. As soon as you have uploaded pictures or
+movies from your camera to your library, you want these pictures to get available to
+your friends, family or whoever. WiPhA provides a powerful, beautiful and easy to use
+<strong>web interface</strong> to your libraries as well as <strong>automatic
+photocast</strong> of every single album of yours. Moreover, people can easily
+<strong>download a bunch of pictures</strong> and import them in their own iPhoto
+library with your captions and comments (for your lucky friends also owning a mac).<br/>
 
 WiPhA intends to be light for your server in terms of cpu and memory usage, and to provide
 extensive search methods to easily browse your pictures, even in a big library.
@@ -105,7 +105,7 @@ still running.
 <a name="reqsrv"><h3> For you, on the server side</h3></a>
 <ul>
     <li> iPhoto Library version 4, 5 or 6 </li>
-    <li> Mac OSX 10.4.x (tested) or 10.3.x (not tested) </li>
+    <li> Mac OSX 10.4.x (tested) or 10.3.x (not tested) [Universal binaries]</li>
     <li> Mac OSX default PHP4 or Entropy PHP5 package (tested)</li>
 </ul>
 

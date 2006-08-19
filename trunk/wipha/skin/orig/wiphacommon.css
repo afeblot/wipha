@@ -89,7 +89,7 @@ li          { list-style-image:url(li_yel.gif);}
 li li       { list-style-image:url(li_green.gif); }
 ul.sum li:hover    { background-color: #e7e7e7; max-width:95%}
 ul.sum li li:hover { background-color: #e0e0e0; }
-ul.sum a:hover { color: #d50; }
+ul.sum a:hover { color: #a20; }
 
 ul.sum {
     background-color: #eee;
