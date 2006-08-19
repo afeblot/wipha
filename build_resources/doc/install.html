@@ -25,19 +25,17 @@ as a new subdirectory of your personal website directory:
 done, here is the exact list of actions requiring these privileges: </p>
 
 <ul>
-    <li> Let Apache deal with php (not default enabled by Apple)
+    <li> Lets Apache deal with php (not default enabled by Apple)
 	    <ul>
-            <li> uncomment 2 lines in <tt>/etc/httpd/httpd.conf</tt> and backups your
+            <li> uncomments 2 lines in <tt>/etc/httpd/httpd.conf</tt> and backups your
                  previous file </li>
         </ul>
     </li>
-    <li> Enable local <tt>.htaccess</tt> file to protect WiPhA from external attacks
+    <li> Enables local <tt>.htaccess</tt> file to protect WiPhA from external attacks
          without modifying the general configuration
 	    <ul>
-            <li> modify 1 line in <tt>/etc/httpd/users/&lt;user&gt;.conf</tt> and
-                 backups the previous file </li>
-	        <li> -or- creates this file if it doesn't exist (don't know how but this
-                 already happened...) </li>
+            <li> adds 3 lines at the end of <tt>/etc/httpd/httpd.conf</tt> and backups
+            your previous file if not already done</li>
         </ul>
     </li>
 </ul>
@@ -45,13 +43,13 @@ done, here is the exact list of actions requiring these privileges: </p>
 <p> Other permission modifications performed by the installer: </p>
 
 <ul>
-    <li> Set WiPhA data directories so that Apache (www) can write in them (user logins,
+    <li> Sets WiPhA data directories so that Apache (www) can write in them (user logins,
          thumb cache)
 	    <ul>
 	        <li><tt> chmod 3777 data data/cache</tt> (777 + setgid + sticky)</li>
         </ul>
     </li>
-    <li> Set the setuid bit (with user right, not root!) on a small C program which will
+    <li> Sets the setuid bit (with user right, not root!) on a small C program which will
          chmod o+r or o+x the required iPhoto Library files or directories. This has
          proved bo be needed for different iPhoto versions which remove these rights on
          every modification or file creation, whatever your umask is (I hate that).<br/>

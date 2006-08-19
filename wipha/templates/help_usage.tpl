@@ -150,7 +150,10 @@ current displayed page.</p>
 <p><img src="img/zoom.gif" alt="Full Size"/>You can get the full size picture by clicking the
 small magnifying glass in the bottom left corner of the thumb image.</p>
 
-<p><img src="img/slideshow.png" alt="Slide"/>and the slide icon brings you into the slideshow
+<p><img src="img/video.png" alt="Video"/> In case of a movie, you'll get the camera icon
+to download and watch it in your browser.</p>
+
+<p><img src="img/slideshow.png" alt="Slide"/> and the slide icon brings you into the slideshow
 mode.</p>
 
 <div class="image">
@@ -158,7 +161,7 @@ mode.</p>
 </div>
 
 <div class="note"> If you enlarge your browser window, the thumb page will use that extra space
-<em>(you need to refresh the page)</em>.
+<em>(you need to refresh the page)</em>. For instance on a 24" display:
 <div class="image">
 <img src="img/sixcol.jpg" alt="Six columns thumb page"/>
 </div>
@@ -218,11 +221,11 @@ a listing of your selected pictures, with error messages on unaccessible ones.
 
 <a name="import"><h2>IMPORT THE DOWNLOADED PICTURES</h2></a>
 
-<p>Once you have downloaded and uncompressed your zip, you must have 2 files and a Photos folder.
-If you are a poor PC or Linux (well you're not so poor on Linux), you're on your own to do what
-you want whith the pictures, in the Photos folder. But if you have a mac, here's an extra for you,
-to import the photos in your iPhoto and set their captions and comments.
-</p>
+<p>Once you have downloaded and uncompressed your zip, you must have 2 files and a Photos
+folder. If you are a poor PC or Linux user (well you're not so poor on Linux), you're on
+your own to do what you want whith the pictures, in the Photos folder. But if you have a
+mac, here's an extra for you, to import the photos in your iPhoto and set their captions and
+comments. </p>
 
 <div class="image">
 <img src="img/zipcontent.jpg" alt="Zip Content"/>

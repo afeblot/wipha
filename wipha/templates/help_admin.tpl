@@ -8,6 +8,7 @@
     <li><a href="#confacc">CONFIGURING THESE ACCESSES</a></li>
     <li><a href="#alb">ALBUM POINT OF VIEW</a></li>
     <li><a href="#upd">UPDATE WARNING</a></li>
+    <li><a href="#adv">ADVANCED CONFIGURATION</a></li>
 </ul>
 
 <a name="first"><h2>FIRST LOGIN</h2></a>
@@ -127,10 +128,19 @@ have access to an album.</p>
 <img src="img/albumadm.jpg" alt="Album Admin Page"/>
 </div>
 
-<div class="note">For your information, all of these parameters are stored in a configuration file in the
-directory <tt>$HOME/Sites/wipha/data</tt>.</div>
+<div class="note">For your information, all of these parameters are stored in a
+configuration file in the directory <tt>$HOME/Sites/wipha/data</tt>.</div>
 
 <a name="upd"><h2>UPDATE WARNING</h2></a>
 
 <p>If a new version of WiPhA gets available, you'll be noticed about it when you log in (as 
 administrator only, of course).</p>
+
+<a name="adv"><h2>ADVANCED CONFIGURATION</h2></a>
+
+<p>Some additional options may be set in the wipha config file <tt>configs/wipha.conf</tt>.
+<ul>
+    <li><tt>cachesize = 100000000 </tt>: Cache maximum size, in bytes (default: 100Mo).
+    Oldest images will be removed to keep the cache under the specified limit. Set to 0
+    to have an infinite cache size.</li>
+</ul>
