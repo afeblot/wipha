@@ -137,6 +137,8 @@ class IphotoParser {
         $this->keywords = array();
         $this->levels = array();
         $this->version = "";
+        $this->archivePath = dirname($file).'/';    // Don't rely on the value in AlbumData, it may be null
+
        // Create an XML parser
         $this->xml_parser = xml_parser_create();
         // Set the functions to handle opening and closing tags
@@ -240,9 +242,9 @@ class IphotoParser {
                                 break;
                             default:
                                 switch($this->key) {
-                                    case 'Archive Path':
-                                        $this->archivePath = $this->content.'/';
-                                        break;
+                                    // case 'Archive Path':
+                                    //     $this->archivePath = $this->content.'/';
+                                    //     break;
                                     case 'Application Version':
                                         $this->version = preg_replace('/\\s+.*/', '', $this->content);
                                         break;
