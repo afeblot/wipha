@@ -16,7 +16,7 @@
             <tr>
             <td align="center" valign="bottom">
                 <div class="centercell"> <div class="ydsf"> <div class="inner">
-                    <img class="photo" src="photocast?img={$path}&amp;lib={$libId}" alt="Thumb"/>
+                    <img class="photo" src="photocast.php?img={$path}&amp;lib={$libId}" alt="Thumb"/>
                 </div> </div> </div>
             </td>
             </tr>
