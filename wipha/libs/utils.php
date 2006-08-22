@@ -97,6 +97,9 @@ function reloadUrl($url) {
 
 //----------------------------------------------
 function absUrl($url) {
+    if (strpos($url, 'http://')!==false) {
+        return $url;
+    }
     $absUrl = "http://" . $_SERVER['HTTP_HOST'];
     if (strpos($url, '/')===false) {
         $absUrl .= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'). "/" . $url;
@@ -213,7 +216,7 @@ function controlCacheSize($maxCacheSize) {
     if ($cacheSize==0 || ! is_numeric($maxCacheSize)) { return; } // Security
     if ($cacheSize>$maxCacheSize) {
         $listFileInfos = array();
-        exec("\\ls -ltr data/cache| awk '/jpg$/ {print $9 \",\" $5}'", &$listFileInfos);
+        exec("\\ls -ltr data/cache| awk '/jpg$/ {print $9 \",\" $5}'", $listFileInfos);
         while ((list ($key, $fileInfo) = each($listFileInfos)) && ($cacheSize>$maxCacheSize)) {
             list($file, $size) = explode(",", $fileInfo);
             $cacheSize -= $size;
@@ -389,6 +392,23 @@ function imgMagickCmd($path, $args, $cached) {
     //
     // Exemple on MacOS, bash style
     //    return "DYLD_LIBRARY_PATH=/usr/local/ImageMagick-6.2.6/lib  /usr/local/ImageMagick-6.2.6/bin/convert \"$path\" $args \"$cached\"";
+}
+
+//----------------------------------------------
+function store($var, $file) {
+    $serialized = serialize($var);
+    $um = umask(2);
+    if ($f = @fopen("$file","w")) {
+        if (@fwrite($f, $serialized)) {
+            @fclose($f);
+        } else die("Could not write to file $file");
+    } else die("Could not open file $file");
+    umask($um);
+}
+
+//----------------------------------------------
+function retrieve($file) {
+    return unserialize(file_get_contents($file));
 }
 
 ?>

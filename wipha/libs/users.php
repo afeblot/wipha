@@ -38,7 +38,7 @@ knowledge of the CeCILL license and that you accept its terms.
 require_once('persistent.php');
 define('USERS_FILE', 'data/users.ser');
 define('DEFAULT_ADMIN', 'admin');
-define('USERS_VERSION', 2);
+define('USERS_VERSION', 3);
 
 define('NO_SUCH_USER', 1);
 define('USER_EXISTS', 2);
@@ -52,13 +52,22 @@ class Users extends Persistent {
 
     //----------------------------------------------
     function Users($forceReadFile=false) {
-        $this->usersData=array(DEFAULT_ADMIN =>array('passwd'=>crypt(DEFAULT_ADMIN), 'albums'=>array())
-                              ,'guest' =>array('passwd'=>crypt('guest'), 'albums'=>array())
+        $this->usersData=array(DEFAULT_ADMIN =>array('passwd'=>crypt(DEFAULT_ADMIN), 'albums'=>array(), 'albumsTS'=>array())
+                              ,'guest' =>array('passwd'=>crypt('guest'), 'albums'=>array(), 'albumsTS'=>array())
         );   // default value
         $this->admin = DEFAULT_ADMIN;
         $this->version = USERS_VERSION;
         $this->Persistent(USERS_FILE);
         $this->open($forceReadFile);
+        
+        # Update from v2 to v3
+        if ($this->version<3) {
+            $this->version = USERS_VERSION;
+            foreach ($this->usersData as $login=>$foo) {
+                $this->usersData[$login]['albumsTS'] = array();
+            }
+            $this->save();
+        }
     }
 
     //----------------------------------------------
@@ -93,7 +102,7 @@ class Users extends Persistent {
         } else return false;
     }
     
-     //----------------------------------------------
+    //----------------------------------------------
     function userList() {
         $users = array_keys($this->usersData);
         // remove admin
@@ -102,7 +111,14 @@ class Users extends Persistent {
     }
     
    //----------------------------------------------
-   // albums authorized for this user
+   // Albums settings last modification date for this user
+    function userAlbumsTS($libid, $login) {
+        $login = trim(strtolower($login));
+        return $this->usersData[$login]['albumsTS'][$libid];
+    }
+
+    //----------------------------------------------
+    // albums authorized for this user
     function userAlbums($libid, $login) {
         $login = trim(strtolower($login));
         $albums = $this->usersData[$login]['albums'][$libid];
@@ -115,8 +131,8 @@ class Users extends Persistent {
         }
     }
 
-   //----------------------------------------------
-   // users authorized for this album
+    //----------------------------------------------
+    // users authorized for this album
     function albumUsers($libid, $album) {
         $logins = array();
         foreach ($this->usersData as $login=>$data) {
@@ -167,6 +183,7 @@ class Users extends Persistent {
                 return false;
             }
             $this->usersData[$login]['albums'][$libid] = $albums;
+            $this->usersData[$login]['albumsTS'][$libid] = time();
         }
         $ok = true;
         if ( ! empty($newLogin)) {
@@ -199,13 +216,19 @@ class Users extends Persistent {
                 if ( ! isset($this->usersData[$login]['albums'][$libid])) {
                     $this->usersData[$login]['albums'][$libid] = array();
                 }
-                $albums =& $this->usersData[$login]['albums'][$libid];
+                $albums    =& $this->usersData[$login]['albums'][$libid];
+                $timestamp =& $this->usersData[$login]['albumsTS'][$libid];
                 if (in_array($login, $logins)) {
                     if ( ! in_array($album, $albums)) {
                         array_push($albums, $album);
+                        $timestamp = time();
                     }
                 } else {
-                    unset($albums[array_search($album, $albums)]);
+                    $key = array_search($album, $albums);
+                    if ($key!==FALSE) {
+                        unset($albums[$key]);
+                        $timestamp = time();
+                    }
                 }
             }
             $this->save();
@@ -225,6 +248,7 @@ class Users extends Persistent {
         }
         $this->usersData[$login]['passwd'] = crypt($passwd);
         $this->usersData[$login]['albums'] = array();
+        $this->usersData[$login]['albumsTS'] = array();
         ksort($this->usersData);
         $this->save();
         return $ok;
