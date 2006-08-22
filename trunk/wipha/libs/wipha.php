@@ -168,77 +168,128 @@ class Wipha {
 
         set_time_limit(0); // No time limit during loading. Large lib may be loooonnnnng
 
-        if ( ! $this->parseDataFile($libFile, $srcUrl)) {
-            return false;
-        }
 
-        if ( ! $demo) {
-            $this->correctImagesPermissions($libFile, $libId);
-        }
+        // ****************************************************************
+        // User INdependant part: process iPhoto file or get it from cache
+        // ****************************************************************
 
-        // For non admin members, if the master album is not authorized,
-        // add an album named as the master album and containing all authorized photos
-        $users =& new Users();
-        // Get the Master album id
-        foreach ($_SESSION['albums'] as $id=>$album) {
-            if ($album['Master']=='TRUE') {
-                $master = $id;
-                $_SESSION['master'] = $id;
-                break;
+        $dataFilecache = "data/cache/iphoto_$libId.ser";
+        $libWasCached=false;
+        if ( (file_exists($dataFilecache))&&(filemtime($libFile)<filemtime($dataFilecache))) {
+            list(
+                $_SESSION['photos'],
+                $_SESSION['albums'],
+                $_SESSION['keywords']
+                ) = retrieve($dataFilecache);
+                $libWasCached = true;
+        } else {
+            if ( ! $this->parseDataFile($libFile, $srcUrl)) {
+                return false;
             }
+
+            if ( ! $demo) {
+                $this->correctImagesPermissions($libFile, $libId);
+            }
+
+            // Compute the size of the displayed Thumbs
+            // max size = 240 for iPhoto 5 (this is fine) but iPhoto 6 thumbs are too big.
+            foreach ($_SESSION['photos'] as $id=>$photo) {
+                $r = $photo['Aspect Ratio'];
+                if ($r>1) {
+                    $w = 240;
+                    $h = round($w/$r);
+                } else {
+                    $h = 240;
+                    $w = round($h*$r);
+                }
+                $_SESSION['photos'][$id]['width'] = $w;
+                $_SESSION['photos'][$id]['height'] = $h;
+            }
+
+            // Add a special album containing all photos the user wants to download
+            $this->createAlbum('download', '* Selected for download', array());
+            
+            store(array(
+                        $_SESSION['photos'],
+                        $_SESSION['albums'],
+                        $_SESSION['keywords']
+                        ), $dataFilecache);
         }
-        if ( ! $_SESSION['is_admin'] && ! $users->hasFullAccess($libId, $_SESSION['user'])) {
-            // If the master is not authorized for this user
-            $userAlbums = $users->userAlbums($libId, $_SESSION['user']);
-            if ( ! in_array($master, $userAlbums)) {
-                $photoIds = array();
-                foreach ($userAlbums as $albumId=>$album) {
-                    if (is_numeric($albumId)) {
-                        foreach ($_SESSION['albums'][$album]['PhotoIds'] as $id) {
-                            if ( ! in_array($id, $photoIds)) {
-                                $photoIds[] = $id;
+
+
+        // ********************************************************************
+        // User dependant part: create restricted master album, filter keywords
+        // ********************************************************************
+
+        $users =& new Users();
+        $userFilecache = "data/cache/user_".$_SESSION['user']."_$libId.ser";
+        if ( (file_exists($userFilecache)) &&
+             (filemtime($libFile)<filemtime($userFilecache)) &&
+             // cache must be older than the last albums settings modification
+             ($users->userAlbumsTS($libId, $_SESSION['user'])<filemtime($userFilecache))
+            ) {
+            list(
+                $_SESSION['master'],
+                $masterName,
+                $photoIds,
+                $_SESSION['keywords']
+                ) = retrieve($userFilecache);
+                if ($masterName) {
+                    $this->createAlbum('all', ' '.$masterName, $photoIds);
+                }
+        } else {
+            // For non admin members, if the master album is not authorized,
+            // add an album named as the master album and containing all authorized photos
+
+            // Get the Master album id
+            foreach ($_SESSION['albums'] as $id=>$album) {
+                if ($album['Master']=='TRUE') {
+                    $_SESSION['master'] = $id;
+                    break;
+                }
+            }
+            if ( ! $_SESSION['is_admin'] && ! $users->hasFullAccess($libId, $_SESSION['user'])) {
+                // If the master is not authorized for this user
+                $userAlbums = $users->userAlbums($libId, $_SESSION['user']);
+                if ( ! in_array($_SESSION['master'], $userAlbums)) {
+                    $photoIds = array();
+                    foreach ($userAlbums as $albumId=>$album) {
+                        if (is_numeric($albumId)) {
+                            foreach ($_SESSION['albums'][$album]['PhotoIds'] as $id) {
+                                if ( ! in_array($id, $photoIds)) {
+                                    $photoIds[] = $id;
+                                }
                             }
                         }
                     }
-                }
-                $masterName = isset($master) ? $_SESSION['albums'][$master]['AlbumName'] : "Library";
-                $this->createAlbum('all', ' '.$masterName, $photoIds);
-                $_SESSION['master'] = 'all';
-            }
-        }
-
-        // Add a special album containing all photos the user wants to download
-        $this->createAlbum('download', '* Selected for download', array());
-
-        // Compute the size of the displayed Thumbs
-        // max size = 240 for iPhoto 5 (this is fine) but iPhoto 6 thumbs are too big.
-        foreach ($_SESSION['photos'] as $id=>$photo) {
-            $r = $photo['Aspect Ratio'];
-            if ($r>1) {
-                $w = 240;
-                $h = round($w/$r);
-            } else {
-                $h = 240;
-                $w = round($h*$r);
-            }
-            $_SESSION['photos'][$id]['width'] = $w;
-            $_SESSION['photos'][$id]['height'] = $h;
-        }
-
-        // Compute the nb of (authorized) photos for each keywords. Remove useless keywords
-        foreach ($_SESSION['albums'][$_SESSION['master']]['PhotoIds'] as $photoId) {
-            if (is_array($_SESSION['photos'][$photoId]['Keywords'])) {
-                foreach ($_SESSION['photos'][$photoId]['Keywords'] as $idkw) {
-                    $foundkw[$idkw]++;
+                    $masterName = isset($_SESSION['master']) ? $_SESSION['albums'][$_SESSION['master']]['AlbumName'] : "Library";
+                    $this->createAlbum('all', ' '.$masterName, $photoIds);
+                    $_SESSION['master'] = 'all';
                 }
             }
-        }
-        foreach ($_SESSION['keywords'] as $idkw=>$kw) {
-            if ($foundkw[$idkw]) {
-                $_SESSION['keywords'][$idkw] .= " (".$foundkw[$idkw].")";
-            } else {
-                unset($_SESSION['keywords'][$idkw]);
+
+            // Compute the nb of (authorized) photos for each keywords. Remove useless keywords
+            foreach ($_SESSION['albums'][$_SESSION['master']]['PhotoIds'] as $photoId) {
+                if (is_array($_SESSION['photos'][$photoId]['Keywords'])) {
+                    foreach ($_SESSION['photos'][$photoId]['Keywords'] as $idkw) {
+                        $foundkw[$idkw]++;
+                    }
+                }
             }
+            foreach ($_SESSION['keywords'] as $idkw=>$kw) {
+                if ($foundkw[$idkw]) {
+                    $_SESSION['keywords'][$idkw] .= " (".$foundkw[$idkw].")";
+                } else {
+                    unset($_SESSION['keywords'][$idkw]);
+                }
+            }
+            
+            store(array(
+                        $_SESSION['master'],
+                        $masterName,
+                        $photoIds,
+                        $_SESSION['keywords']
+                        ), $userFilecache); 
         }
 
         // All is ok, memorize the loaded  lib
@@ -246,7 +297,8 @@ class Wipha {
         $_SESSION['library']['path'] .= '/';
 
         set_time_limit(30); // Restore standard value for the end of the script
-        return true;
+
+        return $libWasCached ? "cached" : true;
     }
 
     //----------------------------------------------
@@ -768,8 +820,13 @@ class Wipha {
                 case 'ref': $srcUrl = $_SERVER['HTTP_REFERER']; break;
                 case 'ses': $srcUrl = $_SESSION['srcUrl'];     break;
             }
-            if ($this->loadLibrary($id, $srcUrl)) {
+            $ret = $this->loadLibrary($id, $srcUrl);
+            if ($ret) {
                 unset($_SESSION['srcUrl']);
+                if ($ret==="cached") {
+                    // The lib was read from cache files, no GUI/javascript -> go to srcUrl
+                    reloadUrl($srcUrl);
+                }
             } else {
                 // The library has not been loaded succesfully, memorize the srcUrl
                 $_SESSION['srcUrl'] = $srcUrl;
