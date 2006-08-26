@@ -30,7 +30,7 @@
 {else}
 {if $smarty.session.is_admin == true }
             <a href="admin.php" class="right">Admin</a>{/if}
-            <a href="main.php?logout" class="right">Disconnect</a>
+            <a href="main.php?logout" class="right">Logout</a>
             <span class="left">Logged as <strong>{$smarty.session.user|capitalize}</strong>
             {if isset($smarty.session.library)} in <strong>{$smarty.session.library.name}</strong>{/if}</span>
 {if $smarty.session.nblibrary > 1}
