@@ -184,7 +184,7 @@ slidewhow, click the pause button (replaces the start button when playing).</p>
 <img src="img/slide.jpg" alt="Slide Page"/>
 </div>
 
-<p>You may click the <a href="#">Show EXIF data</a> link to display all EXIF values:</p>
+<p>You may click the <a href="#">Show Photo data</a> link to display all EXIF values:</p>
 
 <div class="image">
 <img src="img/exif.png" alt="Exif Tables"/>
