@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
   <channel>
-    <title>{$albumName|escape:'htmlall'} - {$library.name|escape:'htmlall'}</title>
+    <title>{$albumName|escape:'html'} - {$library.name|escape:'html'}</title>
     <link>{$site}</link>
     <language>en-us</language>
-    <description>{$albumName|escape:'htmlall'} - {$library.name|escape:'htmlall'}</description>
+    <description>{$albumName|escape:'html'} - {$library.name|escape:'html'}</description>
 {foreach from=$photoIds item="photoId"}
 {if $photos[$photoId].MediaType eq "Image"}
     <item>
-      <title>{$photos[$photoId].Caption|escape:'htmlall'}</title>
-      <description>{$photos[$photoId].Caption|escape:'htmlall'}&lt;br/&gt;{$photos[$photoId].Comment|escape:'htmlall'}&lt;br/&gt;&lt;img src="{$site}/photocast.php?lib={$library.id}&amp;img={$photos[$photoId].encThumbPath}{if $smarty.session.user=='guest'}&amp;guest{/if}"/&gt;</description>
+      <title>{$photos[$photoId].Caption|escape:'html'}</title>
+      <description>{$photos[$photoId].Caption|escape:'html'}&lt;br/&gt;{$photos[$photoId].Comment|escape:'html'}&lt;br/&gt;&lt;img src="{$site}/photocast.php?lib={$library.id}&amp;img={$photos[$photoId].encThumbPath}{if $smarty.session.user=='guest'}&amp;guest{/if}"/&gt;</description>
       <pubDate>{$photos[$photoId].Timestamp|date_format:"%a, %d %b %Y %T %z"}</pubDate>
       <guid>{$site}/photocast.php?lib={$library.id}&amp;sl={$photos[$photoId].encThumbPath}{if $smarty.session.user=='guest'}&amp;guest{/if}</guid>
       <link>{$site}/photocast.php?lib={$library.id}&amp;sl={$photos[$photoId].encThumbPath}{if $smarty.session.user=='guest'}&amp;guest{/if}</link>
