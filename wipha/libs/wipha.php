@@ -831,21 +831,23 @@ class Wipha {
             switch($src) {
                 case 'uri': $srcUrl = $_SERVER['REQUEST_URI'];  break;
                 case 'ref': $srcUrl = $_SERVER['HTTP_REFERER']; break;
-                case 'ses': $srcUrl = $_SESSION['srcUrl'];     break;
+                case 'ses': $srcUrl = $_SESSION['srcUrl'];      break;
             }
             $ret = $this->loadLibrary($id, $srcUrl);
             if ($ret) {
                 unset($_SESSION['srcUrl']);
                 if ($ret==="cached") {
                     // The lib was read from cache files, no GUI/javascript -> go to srcUrl
-                    reloadUrl($srcUrl);
+                    if ($src != 'uri') {    # otherwise, just go on loading the page
+                        reloadUrl($srcUrl);
+                    }
+                } elseif ( ! $this->silentLoad()) {
+                    exit;   // loading.tpl will require the URL again by itself
                 }
             } else {
-                // The library has not been loaded succesfully, memorize the srcUrl
+                // The library has NOT been loaded succesfully, memorize the srcUrl
                 $_SESSION['srcUrl'] = $srcUrl;
-            }
-            if ( ! $this->silentLoad()) {
-                exit;   // loading.tpl will require the URL again by itself
+                exit;
             }
         }
     }
