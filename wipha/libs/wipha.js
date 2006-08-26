@@ -79,7 +79,7 @@ function toggleSearchType() {
             sbt = "simple";
         }
     }
-    document.cookie = 'searchbarType='+sbt+'; path=/'
+    document.cookie = 'searchbarType='+sbt+'; path=/';
 }
 
 //-----------------------------------------------------------------------------
@@ -236,13 +236,34 @@ function getBrowserWidth() {
 }
 
 //-----------------------------------------------------------------------------
-function storeBrowserSize(){
-    document.cookie = 'browserwidth='+getBrowserWidth()+'; path=/'
+function storeBrowserSize() {
+    document.cookie = 'browserwidth='+getBrowserWidth()+'; path=/';
 }
 
 // These can't be registered with Behaviour
 window.onresize = storeBrowserSize;
 window.onfocus = storeBrowserSize;
+
+//-----------------------------------------------------------------------------
+function toggleExif(elt) {
+    var phid = elt.id.slice(1);
+    if (phid=="none") {
+        Element.hide('exifdata');
+    } else {
+        Element.show('exifdata');
+        if (Element.empty('exifdata')) {
+            var img = document.createElement("img");
+            img.src = "skin/orig/loading.gif";
+            $('exifdata').appendChild(img);
+            sendAjax("exif="+phid, undefined, 'exifdata');
+        }
+    }
+    var elts = document.getElementsByClassName('exif');
+    for(var i=0; i<elts.length; i++) {
+        Element.toggle(elts[i]);
+    }
+    document.cookie = 'exif='+(phid=="none" ? "no" : "yes") +'; path=/';
+}
 
 //=============================================================================
 var myrules = {
@@ -303,9 +324,9 @@ var myrules = {
             updateKeywords(elt);
         }
     },
-    '#exif a' : function(elt) {
+    'a.exif' : function(elt) {
         elt.onclick = function(event) {
-            sendAjax("exif="+elt.id.slice(1), undefined, elt.parentNode);
+            toggleExif(elt);
         }
     }
 };

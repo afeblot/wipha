@@ -36,11 +36,10 @@
         </div>
     </td>
     </tr></table>
-    
     {if $photo.MediaType eq "Image"}
-        <div id="exif">
-            <a class="perm" href="#" id="x{$photoId}">Show EXIF data</a>
-        </div>
+        <a class="exif perm" href="#" id="x{$photoId}"{if $smarty.cookies.exif=="yes"} style="display:none"{/if}>Show Photo data</a>
+        <a class="exif perm" href="#" id="xnone"{if $smarty.cookies.exif=="no"} style="display:none"{/if}>Hide Photo data</a>
+        <div id="exifdata">{if $smarty.cookies.exif=="yes"}{include file="exif.tpl"}{/if}</div>
     {/if}
 
 </div>

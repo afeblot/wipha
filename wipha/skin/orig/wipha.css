@@ -467,13 +467,13 @@ ybl.sel:hover mbl:hover dbl:hover, ybl:hover mbl.sel:hover dbl:hover, ybl:hover 
     float: left;
 }
 
-#exif table {
+#exifdata table {
     padding-top:0;
     margin-top:15px;
     border: 1px solid #888;
 }
 
-#exif th {
+#exifdata th {
     border-top: none;
     border-left: none;
     border-right: none;
@@ -481,7 +481,7 @@ ybl.sel:hover mbl:hover dbl:hover, ybl:hover mbl.sel:hover dbl:hover, ybl:hover 
     background-color: #eef;
 }
 
-#exif td {
+#exifdata td {
     background: none;
     padding-left: 3px;
     padding-right: 3px;
@@ -489,11 +489,11 @@ ybl.sel:hover mbl:hover dbl:hover, ybl:hover mbl.sel:hover dbl:hover, ybl:hover 
     padding-bottom: 1px;
 }
 
-#exif tr.odd td {
+#exifdata tr.odd td {
     background-color: #eee; border: none;
 }
 
-#exif tr.even td {
+#exifdata tr.even td {
     background-color: #ccc; border: none;
 }
 
