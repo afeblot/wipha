@@ -68,6 +68,9 @@ class Wipha {
         if ( ! $_COOKIE['nbRows']) {
             setcookie('nbRows', $this->availableNbRows[1], time()+3600*24*365, '/');
         }
+        if ( ! $_COOKIE['exif']) {
+            setcookie('exif', "no", time()+3600*24*365, '/');
+        }
         
         // in session because used in header.tpl
         $_SESSION['nblibrary'] = count($this->authorizedLibs());
@@ -729,24 +732,34 @@ class Wipha {
         $this->smarty->assign_by_ref('download', $_SESSION['albums']['download']['PhotoIds']);
         $this->smarty->assign('albumDisplayed', $_SESSION['lastSearch']['album']);    // for photocast in header.tpl
         $this->smarty->assign('prefetch', $_SERVER['SCRIPT_NAME']."?ph=".$nextId."&amp;lib=".$_SESSION['library']['id']);
+        if ($_COOKIE['exif']=="yes") {
+            $this->assignExif($photoId);
+        }
         $this->smarty->display('slideshow.tpl');
         
         $this->contentDisplayed('set');
     }
 
     //----------------------------------------------
-    function exif($photoId) {
-        $path = $_SESSION['library']['path'].$_SESSION['photos'][$photoId]['ImagePath'];
-        $exifraw = exif_read_data($path, 0, true);
-        foreach ($exifraw as $key => $section) {
-	        foreach ($section as $name => $val) {
-		        if ($name != "MakerNote") {
-			        $exif[$key][]=$name;
-			        $exif[$key][]=preg_replace('/([^[:print:]]+)/', '', $val);
-                }
-	        }
+    function assignExif($photoId) {
+        if  ($photoId != "none") {
+            $path = $_SESSION['library']['path'].$_SESSION['photos'][$photoId]['ImagePath'];
+            $exifraw = exif_read_data($path, 0, true);
+            foreach ($exifraw as $key => $section) {
+	            foreach ($section as $name => $val) {
+		            if ($name != "MakerNote") {
+			            $exif[$key][]=$name;
+			            $exif[$key][]=preg_replace('/([^[:print:]]+)/', '', $val);
+                    }
+	            }
+            }
+            $this->smarty->assign('exif', $exif);
         }
-        $this->smarty->assign('exif', $exif);
+    }
+
+    //----------------------------------------------
+    function exif($photoId) {
+        $this->assignExif($photoId);
         return $this->smarty->fetch('exif.tpl');
     }
 
