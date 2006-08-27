@@ -3,7 +3,7 @@
 {include file="searchbar.tpl"}
 {if $photoIds|@count > 0}
     {include file="photopage.tpl" }
-    {if $selectedNbRows > 2}
+    {if $need2ndSeachBar}
         {include file="searchbar.tpl"}
     {/if}
 {else}

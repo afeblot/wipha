@@ -626,8 +626,6 @@ class Wipha {
         $this->smarty->assign('posEnd', min($pos+$pageSize, count($photoIdsSelected)));
         $this->smarty->assign('nbSelected', count($photoIdsSelected));
 
-
-
         // Only pass a page of photos
         $photoIdsSelected = array_slice($photoIdsSelected, $pos, $pageSize);
         
@@ -637,7 +635,8 @@ class Wipha {
         $this->smarty->assign_by_ref('download', $_SESSION['albums']['download']['PhotoIds']);
         $this->smarty->assign('albumDisplayed', $album);    // for photocast in header.tpl
         $this->smarty->assign('nbCols', $nbCols);
-        $this->smarty->assign('selectedPageSize', $pageSize);
+        $this->smarty->assign('selectedPageSize', $pageSize);   // for the pager
+        $this->smarty->assign('need2ndSeachBar', (count($photoIdsSelected)/$nbCols)>2);
         $this->smarty->display('results.tpl');
         
         $this->contentDisplayed('set');
