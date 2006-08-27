@@ -2,7 +2,7 @@
 
 <ul class="sum">
     <li><a href="#goal">GOAL: Share your iPhoto Libraries</a></li>
-    <li><a href="#mean">MEAN</a></li>
+    <li><a href="#overv">OVERVIEW</a></li>
     <li><a href="#key">KEY FEATURES</a>
         <ul>
             <li><a href="#web">Full featured yet easy web access to your iPhoto Libraries, including movies</a></li>
@@ -21,25 +21,26 @@
 
 <a name="goal"><h2>GOAL: Share your iPhoto Libraries</h2></a>
 
-Share your iPhoto Libraries over the internet. As soon as you have uploaded pictures or
-movies from your camera to your library, you want these pictures to get available to
-your friends, family or whoever. WiPhA provides a powerful, beautiful and easy to use
-<strong>web interface</strong> to your libraries as well as <strong>automatic
-photocast</strong> of every single album of yours. Moreover, people can easily
-<strong>download a bunch of pictures</strong> and import them in their own iPhoto
-library with your captions and comments (for your lucky friends also owning a mac).<br/>
+<p>Share your iPhoto Libraries over the internet. As soon as you have uploaded
+pictures or movies from your camera to your library, you want these pictures to
+be available to your friends, family or whoever. WiPhA provides a powerful,
+beautiful and easy to use <strong>web interface</strong> to your libraries as
+well as <strong>automatic photocast</strong> of all your albums. Moreover, people
+can easily <strong>download a bunch of pictures</strong> and import them in their
+own iPhoto library with your captions and comments (for your lucky friends also
+using Mac).</p>
+<p>WiPhA doesn't tax your computer in terms of cpu and memory usage. WiPhA also
+provides extensive search capabilities to easily browse your pictures, even in a
+big library.</p>
 
-WiPhA intends to be light for your server in terms of cpu and memory usage, and to provide
-extensive search methods to easily browse your pictures, even in a big library.
+<a name="overv"><h2>OVERVIEW</h2></a>
 
-
-<a name="mean"><h2>MEAN</h2></a>
-
-Your MacOSX standard installation includes a web server which will be used to let others access
-to your pictures through their web browser. After having installed WiPhA, all you have to do is
-configure your friends' rights and give them the URL to connect to. You don't even need to be
-logged in, as long as your computer is on, connected to the internet, and it's web server is
-still running.
+<p>Your Mac OS X standard installation includes a web server which will be used
+to let others access to your pictures through their web browser. After having
+installed WiPhA, all you have to do is configure your friends' rights and give
+them the URL to connect to (anonymous guest access is supported too). You don't
+even need to be logged in, as long as your computer is on, connected to the
+internet, and its web server is still running.</p>
 
 <a name="key"><h2>KEY FEATURES</h2></a>
 
@@ -49,30 +50,31 @@ still running.
 
 <a name="web"><h3>Full featured yet easy web access to your iPhoto Libraries</h3></a>
 <ul>
-    <li> Extensive search methods (albums, captions, comments, dates, keywords) </li>
+    <li> Extensive search capabilities (albums, captions, comments, dates, keywords) </li>
     <li> Unique "date map" feature to get a quick overview of the entire library and select the period to browse</li>
     <li> Manual or automatic slideshow mode </li>
-    <li> Manage multiple libraries </li>
-    <li> Send by mail links to the photos you have displayed and to the associated photocast album</li>
+    <li> Share multiple iPhoto libraries </li>
+    <li> Button to e-mail links to the photos you have displayed and to the associated photocast album</li>
     <li> Display the full size pictures and EXIF data </li>
-    <li> Warning on available updates </li>
+    <li> Automatic update notification </li>
 </ul>
 
 <a name="phcast"><h3>Photocast your albums for free</h3></a>
 <ul>
-    <li>Every Album is automatically photocast (rss feed) without requiring a .mac account</li>
-    <li>Photocast may be used with iPhoto 6 or any RSS reader for Windows users</li>
+    <li>Every Album is automatically <a href="http://www.apple.com/ilife/iphoto/features/photocasting.html" target="_blank">photocast</a> (rss feed) without requiring a .mac account!</li>
+    <li>Photocast may be used with iPhoto 6 or any RSS reader on any OS </li>
 </ul>
 
 <a name="exp"><h3>Export pictures</h3></a>
 <ul>
-    <li> Select pictures and download them as a single zip </li>
-    <li> Import them in an other iPhoto library and keep their captions and comments with the provided applescript </li>
+    <li> Users can select multiple pictures and download them as a single zip </li>
+    <li> User can then import these pictures in an other iPhoto library and keep their captions and comments with the provided AppleScript </li>
 </ul>
 
 <a name="priv"><h3>Enforce your privacy</h3></a>
 <ul>
-    <li> Set different logins with different right access </li>
+    <li>WiPhA support user logins and password that you set </li>
+    <li>You determine which albums each user sees </li>
     <li> Web access and photocast albums are both protected (with the same logins)</li>
     <li> No direct access to files (all data are filtered before being delivered)</li>
 </ul>
@@ -90,7 +92,7 @@ still running.
     <li> Ajax technology used to limit bandwidth usage and get faster responses</li>
     <li> No need to have iPhoto running, or even to be logged in </li>
     <li> No background process will be installed in your account </li>
-    <li> WiPhA relies on the iPhoto data (but doesn't modify them) as much as possible to avoid generating new thumb images </li>
+    <li> WiPhA relies on the iPhoto data (but doesn't modify it) as much as possible to avoid generating new thumb images </li>
     <li> Generated data are cached and reused. </li>
 </ul>
 
