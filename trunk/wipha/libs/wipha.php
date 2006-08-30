@@ -743,16 +743,21 @@ class Wipha {
     function assignExif($photoId) {
         if  ($photoId != "none") {
             $path = $_SESSION['library']['path'].$_SESSION['photos'][$photoId]['ImagePath'];
-            $exifraw = exif_read_data($path, 0, true);
-            foreach ($exifraw as $key => $section) {
-	            foreach ($section as $name => $val) {
-		            if ($name != "MakerNote") {
-			            $exif[$key][]=$name;
-			            $exif[$key][]=preg_replace('/([^[:print:]]+)/', '', $val);
-                    }
-	            }
+            $path = getMacAliasOriginal($path, $error);
+            if (isset($path)) {
+                $exifraw = @exif_read_data($path, 0, true);
+                foreach ($exifraw as $key => $section) {
+	                foreach ($section as $name => $val) {
+		                if ($name != "MakerNote") {
+			                $exif[$key][]=$name;
+			                $exif[$key][]=preg_replace('/([^[:print:]]+)/', '', $val);
+                        }
+	                }
+                }
+                $this->smarty->assign('exif', $exif);
+            } else {
+                die($error);
             }
-            $this->smarty->assign('exif', $exif);
         }
     }
 
