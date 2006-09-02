@@ -67,6 +67,10 @@ if [ -e "$dest/wipha" ]; then
     fi
 
     echo
+    echo "Saving previous WiPhA config"
+    mv "$dest/wipha/configs/wipha.conf" "/tmp/wipha.conf_$unique" 2> $log
+    test_error $?
+    echo
     echo "Moving old version of WiPhA to the trash"
     mv "$dest/wipha" "$home/.Trash/wipha_$unique" 2> $log
 	test_error $?
@@ -98,13 +102,20 @@ test_error $?
 
 if [ -e "/tmp/data_$unique" ]; then
     echo
-    echo "Installing your previous wipha data"
+    echo "Installing your previous WiPhA data"
     mv "$dest/wipha/data" "/tmp/data_empty_$unique" 2> $log
     test_error $?
     mv "/tmp/data_$unique" "$dest/wipha/data" 2> $log
     test_error $?
     rm -r "/tmp/data_empty_$unique"
     rm -f "$dest/wipha/data/cache/*.jpg"
+fi
+
+if [ -e "/tmp/wipha.conf_$unique" ]; then
+    echo
+    echo "Renaming your previous WiPhA config as wipha.conf.old"
+    mv "/tmp/wipha.conf_$unique" "$dest/wipha/configs/wipha.conf.old" 2> $log
+    test_error $?
 fi
 
 cd wipha
