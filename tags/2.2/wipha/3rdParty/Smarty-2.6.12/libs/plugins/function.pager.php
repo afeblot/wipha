@@ -1,0 +1,1 @@
+../../../mySmartyChanges/function.pager.php
