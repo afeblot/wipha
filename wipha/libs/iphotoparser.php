@@ -242,9 +242,12 @@ class IphotoParser {
                                 break;
                             default:
                                 switch($this->key) {
-                                    // case 'Archive Path':
-                                    //     $this->archivePath = $this->content.'/';
-                                    //     break;
+                                case 'Archive Path':
+                                    // If this value is set, it's more reliable than the path set in Wipha's admin page
+                                    if ($this->content!='(null)') {
+                                        $this->archivePath = $this->content.'/';
+                                    }
+                                    break;
                                     case 'Application Version':
                                         $this->version = preg_replace('/\\s+.*/', '', $this->content);
                                         break;
