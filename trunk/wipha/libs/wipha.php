@@ -97,7 +97,24 @@ class Wipha {
             $this->smarty->config_load('wipha.conf');
             $current = $this->smarty->get_config_vars('version');
             $home = $this->smarty->get_config_vars('home');
-            $ser = file_get_contents("$home/update.txt");
+            
+            // Some systems don't allow file_get_contents
+            //$ser = file_get_contents("$home/update.txt");
+            $home = preg_replace("/http:\/\//", "", $home);
+            $fp = fsockopen($home, 80, $errno, $errstr, 30);
+            if (!$fp) {
+                echo "$errstr ($errno)<br />\n";
+            } else {
+                $out = "GET /update.txt HTTP/1.1\r\n";
+                $out .= "Host: $home\r\n";
+                $out .= "Connection: Close\r\n\r\n";
+                fwrite($fp, $out);
+                while (!feof($fp)) {
+                    $ser = fgets($fp);
+                }
+                fclose($fp);
+            }
+
             $last = unserialize($ser);
             $last = $last['wipha'];
             $_SESSION['versionCheck'] = array('time'=>time());
@@ -145,8 +162,8 @@ class Wipha {
         $this->smarty->config_load('wipha.conf');
         $demo = $this->smarty->get_config_vars('demo');
 
-        // don't do this test on my Linux web server (demo)
-        if ( ! isOnGlobsOrg()) {
+        // don't do this test on a Linux web server
+        if ( ! isOnLinux()) {
             // Check that changeperm is chmod u+s
             $stat = stat('./changeperm');
             if (($stat['mode']&04555)!=04555) {
@@ -449,17 +466,18 @@ class Wipha {
                 $albums[$name][$albumId] = $label;
             }
         }
-        
         // Clean the album groups so that parent with a single child having the same name becomes this child back.
         $albumsTmp = $albums;
         unset($albums);
         foreach ($albumsTmp as $name=>$childAlbums) {
             if (count($childAlbums)==1) {
                 list($albumId, $label) = each($childAlbums);
-                if (strstr($label, $name)!==false) {
-                    $albums[$albumId] = $label;
-                } else {
-                    $albums[$name] = $childAlbums;
+                if ( !empty($label) and !empty($name)) {    # Hide the strstr warning which appears in some 'strange' occasions
+                    if (strstr($label, $name)!==false) {
+                        $albums[$albumId] = $label;
+                    } else {
+                        $albums[$name] = $childAlbums;
+                    }
                 }
             } else {
                 $albums[$name] = $childAlbums;

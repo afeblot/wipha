@@ -216,8 +216,8 @@ function d(&$var) {
 }
 
 //----------------------------------------------
-function isOnGlobsOrg() {
-    return (strpos($_SERVER['HTTP_HOST'], 'globs.org')!==false);
+function isOnLinux() {
+    return (php_uname("s")=="Linux");
 }
 
 //----------------------------------------------

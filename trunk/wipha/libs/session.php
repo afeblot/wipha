@@ -55,7 +55,7 @@ class Session {
         }
 
 // $fd = fopen("data/session.log", "a");
-// fwrite($fd, $_SESSION['browser']['app']."(".session_id().") auth=".$_SERVER['PHP_AUTH_USER'].", usr=".$_SESSION['user']."(".$_SESSION['is_admin']."), url=".$_SERVER['REQUEST_URI']." - ");
+// fwrite($fd, $_SESSION['browser']['app']."(".session_id().") auth=".$_SERVER['PHP_AUTH_USER'].", usr=".$_SESSION['user']."(".$_SESSION['is_admin']."), url=".$_SERVER['REQUEST_URI']." \n");
 // fclose($fd);
     }
 
