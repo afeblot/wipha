@@ -1,5 +1,17 @@
 <h1>WIPHA HISTORY</h1>
 
+<h3>Version 2.3 (? Dec 2007)</h3>
+<ul>
+    <li>[new] <strong>Installer is Leopard compatible</strong></li>
+</ul>
+<ul>
+    <li>[fix] The installer can now properly restart the web server (solves some "<tt>You don't have permission to access /~xxxx/wipha/ on this server</tt>" messages)</li>
+    <li>[fix] Fix version check for system where file_get_contents is not implemented</li>
+    <li>[fix] Remove an occasional strstr warning message</li>
+    <li>[fix] Use the library path defined in the library xml file if it is defined, rather than the path given to WiPhA</li>
+    <li>[fix] Replace a mv by cp+rm in the installer, as mv hung on certain occasions</li>
+</ul>
+
 <h3>Version 2.2 (3 Sep 2006)</h3>
 <ul>
     <li>[new] <strong>Now handles iPhoto movies too</strong></li>

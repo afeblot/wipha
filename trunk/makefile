@@ -4,33 +4,38 @@ INSTALLER=dmgContent/WiPhA\ Installer.app
 TBZ=wipha.tbz
 INSTALL_SCRIPT=install_script
 PERM=wipha/changeperm
+APACHE_RESTART=apacheRestart
 
 default: $(DMG)
-all: $(PERM) help $(DMG)
 
 $(DMG): $(INSTALLER) help
 	@ cp build_resources/LICENSE.txt dmgContent/
 	hdiutil create -ov -fs HFS+ -srcfolder dmgContent -volname "WiPhA $(VER)" "$@"
 
-$(INSTALLER): $(INSTALL_SCRIPT) build_installer $(TBZ)
-	./build_installer $(INSTALL_SCRIPT) "$@" $(TBZ) "$(VER)"
+$(INSTALLER): $(INSTALL_SCRIPT) build_installer $(TBZ) $(APACHE_RESTART)
+	./build_installer $(INSTALL_SCRIPT) "$@" $(TBZ) $(APACHE_RESTART) "$(VER)"
 
 $(TBZ): $(PERM) FORCE
 	@ cp build_resources/LICENSE.txt wipha/
-	tar jcf "$@" wipha \
+	tar jcf "$@" \
         --exclude ".svn" \
         --exclude "wipha/test.*" \
         --exclude "wipha/data/*.ser" \
         --exclude "wipha/data/*.dat" \
         --exclude "wipha/data/cache/*" \
-        --exclude "wipha/3rdParty/phpZipLight"
+        --exclude "wipha/3rdParty/phpZipLight" \
+        wipha
 
 $(VER): wipha/configs/wipha.conf
 	@ awk -F\" '/version/ {print $$2}' "$<" > "$@"
 
 wipha/% : %.c
 	@ echo "Build $@" ; \
-	gcc -Wall -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -o "$@" "$<" ; chmod 4755 "$@"
+	gcc -Wall -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4 -o "$@" "$<" ; chmod 4755 "$@"
+
+% : %.c
+	@ echo "Build $@" ; \
+	gcc -Wall -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4 -o "$@" "$<"
 
 HELP_FILES=install.html \
            admin.html \
@@ -89,7 +94,7 @@ guppydoc/%.html: $(RSCD)/%.html
 FORCE:
 
 clean:
-	@ rm -rf $(TBZ) $(DMG) $(INSTALLER) $(DMG_HELP) $(GUPPY_HELP) dmgContent/doc/img/* dmgContent/LICENSE.txt
+	@ rm -rf $(TBZ) $(DMG) $(INSTALLER) $(DMG_HELP) $(GUPPY_HELP) $(APACHE_RESTART) dmgContent/doc/img/* dmgContent/LICENSE.txt
 
 essai.app: 
 	./build_installer essai_script "$@" pipo "$(VER)"
