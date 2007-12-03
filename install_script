@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# /System/Library/CoreServices/ServerVersion.plist
+# /System/Library/CoreServices/ServerVersion.plist : OSX server
+# /System/Library/CoreServices/SystemVersion.plist : OSX standard
 
 log=/tmp/wipha.log
 date=$(date "+%d_%b_%Y-%H:%M:%S")
@@ -35,6 +36,7 @@ fi
 
 home="/Users/$user"
 dest="$home/Sites"
+src="$1"
 
 if  ! [ -d "$dest" ]; then
     otherDest="$HOME/Sites"
@@ -49,6 +51,15 @@ if  ! [ -d "$dest" ]; then
         exit 1
     fi
 fi
+
+# Find out which version of OSX we run on
+osver=`sw_vers | awk '/ProductVersion/ {print substr($2,0,4)}'`
+case "$osver" in
+    10.2 | 10.3 | 10.4 ) webserver="apache";;
+    10.5 ) webserver="apache2";;
+    * ) echo "I don't know this OSX version: '$osver'"; exit 1;;
+esac
+
 
 unique=$(date "+%d_%b_%Y-%H_%M_%S")
 
@@ -79,7 +90,7 @@ fi
 echo
 echo "Decompacting WiPhA in your Sites folder ($dest)"
 cd $dest
-tar jxf "$1/Contents/Resources/wipha.tbz" 2> $log
+tar jxf "$src/Contents/Resources/wipha.tbz" 2> $log
 test_error $?
 
 echo
@@ -128,17 +139,34 @@ test_error $?
 chmod 3777 data/cache 2> $log
 test_error $?
 
+
+### Apache configuration ###
+case "$webserver" in
+    apache)  webserverconf="/etc/httpd/httpd.conf";;
+    apache2) webserverconf="/etc/apache2/httpd.conf";;
+esac
+
 echo
 echo "Configuring Apache to handle php"
-awk ' \
+cat $webserverconf | case "$webserver" in
+    apache) awk ' \
 /[ \t]*#[ \t]*LoadModule[ \t]+php4_module/ {print "# Following line uncommented by WiPha installer"; print "LoadModule php4_module", $3; next} \
 /[ \t]*#[ \t]*AddModule[ \t]+mod_php4.c/ {print "# Following line uncommented by WiPha installer"; print "AddModule mod_php4.c"; next} \
 {print $0} \
-' /etc/httpd/httpd.conf 1> /tmp/httpd.conf 2>$log
+';;
+    apache2) awk ' \
+/[ \t]*#[ \t]*LoadModule[ \t]+php5_module/ {print "# Following line uncommented by WiPha installer"; print "LoadModule php5_module", $3; next} \
+{print $0} \
+';;
+esac 1> /tmp/httpd.conf 2>$log
 test_error $?
-if [ "$(diff /etc/httpd/httpd.conf /tmp/httpd.conf)" != "" ]; then
-    backupOnce /etc/httpd/httpd.conf
-    mv /tmp/httpd.conf /etc/httpd/httpd.conf  2>$log
+if [ "$(diff $webserverconf /tmp/httpd.conf)" != "" ]; then
+    backupOnce $webserverconf
+    # Why does mv hang ???? Let's replace it bt cp+rm
+    # mv /tmp/httpd.conf $webserverconf  2>$log
+    cp /tmp/httpd.conf $webserverconf  2>$log
+    test_error $?
+    rm /tmp/httpd.conf  2>$log
     test_error $?
 else
     rm /tmp/httpd.conf
@@ -147,10 +175,10 @@ fi
 
 echo
 echo "Configuring Apache to take wipha access protection in account (.htaccess)"
-perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"'$dest/wipha'">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' /etc/httpd/httpd.conf
+perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"'$dest/wipha'">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' $webserverconf
 if [ "$?" != "1" ]; then
-    backupOnce /etc/httpd/httpd.conf
-    cat << EOF 1>> /etc/httpd/httpd.conf 2> $log
+    backupOnce $webserverconf
+    cat << EOF 1>> $webserverconf 2> $log
 
 # Following lines added by WiPha installer to take wipha .htaccess into account
 <Directory "$dest/wipha">
@@ -187,21 +215,34 @@ echo -n "'changeperm' permission is -rwsr-xr-x: "
 stat=$(stat -f %Sp changeperm)
 if [ "$stat" == "-rwsr-xr-x" ]; then echo "ok"; else echo "KO ! ($stat)"; err=1; fi
 
-echo -n "OSX Standard PHP4 enabled: "
-load=$(grep -c -E "^[ \t]*LoadModule[ \t]+php4_module[ \t]+libexec/httpd/libphp4.so" /etc/httpd/httpd.conf)
-add=$(grep -c -E "^[ \t]*AddModule[ \t]+mod_php4.c" /etc/httpd/httpd.conf)
-if [ "$load" == "1" ] && [ "$add" == "1" ]; then echo "ok (unless other PHP versions also installed)"; else
-    echo "KO !"; err=1
-    echo "    You should have these 2 lines in /etc/httpd/httpd.conf:"
-    echo "        LoadModule php4_module libexec/httpd/libphp4.so"
-    echo "        AddModule mod_php4.c"
-fi
+case "$webserver" in
+    apache)
+        echo -n "OSX Standard PHP4 enabled: "
+        load=$(grep -c -E "^[ \t]*LoadModule[ \t]+php4_module[ \t]+libexec/httpd/libphp4.so" $webserverconf)
+        add=$(grep -c -E "^[ \t]*AddModule[ \t]+mod_php4.c" $webserverconf)
+        if [ "$load" == "1" ] && [ "$add" == "1" ]; then echo "ok (unless other PHP versions also installed)"; else
+            echo "KO !"; err=1
+            echo "    You should have these 2 lines in $webserverconf:"
+            echo "        LoadModule php4_module libexec/httpd/libphp4.so"
+            echo "        AddModule mod_php4.c"
+        fi
+        ;;
+    apache2)
+        echo -n "OSX Standard PHP5 enabled: "
+        load=$(grep -c -E "^[ \t]*LoadModule[ \t]+php5_module[ \t]+libexec/apache2/libphp5.so" $webserverconf)
+        if [ "$load" == "1" ] ; then echo "ok (unless other PHP versions also installed)"; else
+            echo "KO !"; err=1
+            echo "    You should have this line in $webserverconf:"
+            echo "        LoadModule php5_module libexec/apache2/libphp5.so"
+        fi
+        ;;
+esac
 
 echo -n "WiPhA access protection enabled (.htaccess): "
-perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"'$dest/wipha'">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' /etc/httpd/httpd.conf
+perl -n -e 'BEGIN {undef $/;} exit m%\n\s*<Directory\s+"'$dest/wipha'">\s*\n\s*AllowOverride\s+All\s*\n\s*</Directory>%' $webserverconf
 if [ "$?" == "1" ]; then echo "ok"; else
     echo "KO !"; err=1
-    echo "    You should have these 3 lines in /etc/httpd/httpd.conf:"
+    echo "    You should have these 3 lines in $webserverconf:"
     echo '        <Directory "'$dest/wipha'">'
     echo '            AllowOverride All'
     echo '        </Directory>'
@@ -217,9 +258,20 @@ else
     echo "Installation complete"
     echo
     echo
-    echo "Re-starting Apache server"
-    /usr/sbin/apachectl restart  2> $log 1>/dev/null
+
+    echo "Getting rights to restart Apache server"
+    cp "$src/Contents/Resources/apacheRestart" /tmp/ 2> $log
     test_error $?
+    chown root /tmp/apacheRestart 2> $log
+    test_error $?
+    chmod 4755 /tmp/apacheRestart 2> $log
+    test_error $?
+
+    echo "Re-starting Apache server"
+    /tmp/apacheRestart
+    rm /tmp/apacheRestart
+
+    echo "Wait 5 secondes"
     sleep 5
 
     echo "Your browser should now open the WiPha login page (please bookmark this page for future use)."

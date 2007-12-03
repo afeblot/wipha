@@ -3,7 +3,8 @@
 install_script="$1"
 installerName="$2"
 tbz="$3" # the tar.bz2 of the php application
-version="$4"
+apacheRestarter="$4" # the setuid binary to restart Apache
+version="$5"
 
 rm -rf "$installerName"
 
@@ -13,6 +14,7 @@ rm -rf "$installerName"
     -i "build_resources/installer.icns" \
     -u "Alexandre Feblot" \
     -f "$(pwd)/$tbz" \
+    -f "$(pwd)/$apacheRestarter" \
     -V "$version" \
     -A \
     -R \
