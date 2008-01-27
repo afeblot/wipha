@@ -106,9 +106,9 @@ internet, and its web server is still running.</p>
 
 <a name="reqsrv"><h3> For you, on the server side</h3></a>
 <ul>
-    <li> iPhoto Library version 4, 5 or 6 </li>
-    <li> Mac OSX 10.4.x (tested) or 10.3.x (not tested) [Universal binaries]</li>
-    <li> Mac OSX default PHP4 or Entropy PHP5 package (tested)</li>
+    <li> iPhoto Library version 4, 5, 6 or 7 </li>
+    <li> Mac OSX 10.5.x (tested), 10.4.x (tested) or 10.3.x (not tested) [Universal binaries]</li>
+    <li> Mac OSX default PHP or Entropy PHP5 package (tested)</li>
 </ul>
 
 <a name="reqcli"><h3> For your users (and you as a user)</h3></a>
