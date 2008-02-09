@@ -527,7 +527,7 @@ class Wipha {
         $this->smarty->assign('kwSearchTypes', $this->availableKwSearchTypes);
         $this->smarty->assign('selectedKwSearchType', $kwSearchType ? $kwSearchType : 'l');
         
-        if ( ! empty($album)) {
+        if ( ! empty($album) && $album != "download") {
             $url = urlWithLib($_SESSION['library']['id']);
             $urlPhotoCast = absUrl('photocast.php?lib='.$_SESSION['library']['id'].'&al='.$album);
             $this->smarty->assign('url', $url);
@@ -535,6 +535,7 @@ class Wipha {
             $albumName = $_SESSION['albums'][$album]['AlbumName'];
             $body = $this->smarty->fetch('messagebody.tpl');
             $this->smarty->assign('mailurl', "mailto:?subject=".rawurlencode($albumName." Photos")."&amp;body=".rawurlencode($body));
+            $this->smarty->assign('albumDisplayed', $album);    // for photocast in header.tpl
         }
     }
 
@@ -651,7 +652,6 @@ class Wipha {
         $this->smarty->assign_by_ref('photos', $_SESSION['photos']);
         $this->smarty->assign_by_ref('photoIds', $photoIdsSelected);
         $this->smarty->assign_by_ref('download', $_SESSION['albums']['download']['PhotoIds']);
-        $this->smarty->assign('albumDisplayed', $album);    // for photocast in header.tpl
         $this->smarty->assign('nbCols', $nbCols);
         $this->smarty->assign('selectedPageSize', $pageSize);   // for the pager
         $this->smarty->assign('need2ndSeachBar', (count($photoIdsSelected)/$nbCols)>2);
@@ -747,7 +747,6 @@ class Wipha {
         $this->smarty->assign('time', max((isset($time) ? $time : 10),5));    // minimum 5: Security
         $this->smarty->assign('state', ($time>0) ? "playing" : "paused");
         $this->smarty->assign_by_ref('download', $_SESSION['albums']['download']['PhotoIds']);
-        $this->smarty->assign('albumDisplayed', $_SESSION['lastSearch']['album']);    // for photocast in header.tpl
         $this->smarty->assign('prefetch', $_SERVER['SCRIPT_NAME']."?ph=".$nextId."&amp;lib=".$_SESSION['library']['id']);
         if ($_COOKIE['exif']=="yes") {
             $this->assignExif($photoId);

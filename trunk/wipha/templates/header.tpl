@@ -16,8 +16,8 @@
         <script type="text/javascript" src="3rdParty/PHP_Serializer.js"></script>
         <script type="text/javascript" src="libs/wipha.js"></script>
         <script type="text/javascript" src="libs/datemap.js"></script>
-{if ! empty($albumDisplayed) && $albumDisplayed != "download"}
-        <link rel="alternate" title="WiPhA {$smarty.session.albums[$albumDisplayed].AlbumName}" href="photocast.php?lib={$smarty.session.library.id}&amp;al={$albumDisplayed}" type="application/rss+xml"/>
+{if ! empty($photocastUrl)}
+        <link rel="alternate" title="WiPhA {$smarty.session.albums[$albumDisplayed].AlbumName}" href="{$photocastUrl|escape}{if $smarty.session.user=='guest'}&amp;guest{/if}" type="application/rss+xml"/>
 {/if}
 {if ! empty($prefetch)}
         <link rel="prefetch" href="{$prefetch}"/>   {* for next slideshow image *}
@@ -38,8 +38,8 @@
 {/if}
             <a href="main.php">New search</a>
             <a href="main.php?help" target="_blank">Help</a>
-{if ! empty($albumDisplayed) && $albumDisplayed != "download"}
-            <a href="photocast.php?lib={$smarty.session.library.id}&amp;al={$albumDisplayed}" class="photocast" title="{$smarty.session.albums[$albumDisplayed].AlbumName} album Photocast" target="_blank">&nbsp;&nbsp;&nbsp;&nbsp;</a>
+{if ! empty($photocastUrl)}
+            <a href="{$photocastUrl|escape}{if $smarty.session.user=='guest'}&amp;guest{/if}" class="photocast" title="{$smarty.session.albums[$albumDisplayed].AlbumName} album Photocast" target="_blank">&nbsp;&nbsp;&nbsp;&nbsp;</a>
 {/if}
 {/if}
         </div>
