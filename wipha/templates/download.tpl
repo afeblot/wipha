@@ -2,7 +2,8 @@
 {if $nbSel > 0}
     {if $multipart == false}
         <script type="text/javascript">
-        Behaviour.addLoadEvent( function() {ldelim}window.location="{$smarty.server.REQUEST_URI}";{rdelim} );
+        function download() {ldelim} window.location="{$smarty.server.REQUEST_URI}"; {rdelim} ;
+        Behaviour.addLoadEvent( setTimeout("download()", 2000) );
         </script>
     {/if}
     <p>Your download will begin automatically.</p>

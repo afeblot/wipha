@@ -1209,7 +1209,7 @@ class Wipha {
         // Otherwise, store a tag in the session and let the page relaunch itself.
         $doMultipart = in_array($_SESSION['browser'][app], array("FIREFOX", "CAMINO"));
         $this->smarty->assign('multipart', $doMultipart);
-        
+
         if ($doMultipart || ( ! isset($_SESSION['sendZip']))) {
             // Estimate the size of the download....
             $size = 0;
@@ -1254,7 +1254,7 @@ class Wipha {
             }
         }
         
-        $zip = new PhotosZip('WiPhA_Export.zip', true,
+        $zip = new PhotosZip('WiPhA_Export.zip', true, $doMultipart,
                             $_SESSION['albums']['download']['PhotoIds'],
                             $_SESSION['photos'], $_SESSION['library']['path']);
         $zip->addAllPhotos();
