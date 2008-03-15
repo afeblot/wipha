@@ -48,11 +48,11 @@ class PhotosZip extends zipper {
     var $photos = NULL;
     var $library = NULL;
     //----------------------------------------------
-    function PhotosZip($name, $doStream, &$downloadIds, &$photos, $library) {
+    function PhotosZip($name, $doStream, $doMultipart, &$downloadIds, &$photos, $library) {
         $this->downloadIds = $downloadIds;
         $this->photos = $photos;
         $this->library = $library;
-        $this->zipper($name, 6, $doStream);
+        $this->zipper($name, 6, $doStream, $doMultipart);
         $importName = strftime("Web iPhoto Access Import (%d %b %Y, %H:%M:%S)");
         $this->index = '          ------ INDEX ------'.NEWLINE.NEWLINE;
         $this->import = <<<EOS

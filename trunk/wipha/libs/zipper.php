@@ -59,15 +59,18 @@ class zipper {
 		var $comment;
         var $archive;
         var $doStream;  // Don't bufferize data. Immediately send zipped data to the browser.
+        var $doMultipart;
 
     //---------------------------------------
-    function zipper($name, $compressionLevel=6, $doStream=false) {
+    function zipper($name, $compressionLevel=6, $doStream=false, $doMultipart=false) {
         $this->clean();
         $this->name = $name;
 		if($compressionLevel<0) $compressionLevel=0;
 		if($compressionLevel>9) $compressionLevel=9;
         $this->level = $compressionLevel;
         $this->doStream = $doStream;
+        $this->doMultipart = $doMultipart;
+
         if ($doStream) {
             $this->sendHeaders();
         }
@@ -135,9 +138,7 @@ class zipper {
 
     //---------------------------------------
     function sendHeaders() {
-        flush();    // necessary for headers_sent()
-        // This is to enable a multipart send.
-        if (headers_sent()) {
+        if ($this->doMultipart) {
             print "Content-Type: application/zip\n";
 		    print "Content-Disposition: attachment; filename=\"$this->name\"\n";
 		    if ( ! $this->doStream) {
