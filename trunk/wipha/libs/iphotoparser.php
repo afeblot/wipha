@@ -100,6 +100,8 @@ define('PARSER_IN_PHOTO_LIST', 50);
 define('PARSER_IN_PHOTO', 60);
 define('PARSER_IN_PHOTO_KEYWORDS', 70);
 
+define('EVENT_MASTER_ALBUM', 9991343); // Random bug number for a fake Events master album
+
 //=============================================================================
 class IphotoParser {
     var $xml_parser;
@@ -137,6 +139,8 @@ class IphotoParser {
         $this->keywords = array();
         $this->levels = array();
         $this->version = "";
+        $this->showRolls = FALSE;
+
         $this->archivePath = dirname($file).'/';    // Don't rely on the value in AlbumData, it may be null
 
        // Create an XML parser
@@ -197,7 +201,6 @@ class IphotoParser {
         do {
             $percent = $this->parseLittle();
         } while ($percent<1.0);
-        return $this->getResults();
     }
 
     //---------------------------------------------------------
@@ -227,6 +230,7 @@ class IphotoParser {
             case PARSER_NOWHERE:
                 switch ($this->content) {
                     case 'List of Albums':
+                    case 'List of Rolls':
                         $this->state = PARSER_IN_ALBUM_LIST;
                         break;
                     case 'List of Keywords':
@@ -250,6 +254,15 @@ class IphotoParser {
                                     break;
                                     case 'Application Version':
                                         $this->version = preg_replace('/\\s+.*/', '', $this->content);
+                                        if (version_compare($this->version, "7", ">=")) {
+                                            $this->showRolls = TRUE;
+                                            $this->albums[EVENT_MASTER_ALBUM] = array(
+                                                'AlbumName' => 'Events',
+                                                'AlbumId'   => EVENT_MASTER_ALBUM,
+                                                'AlbumType' => 'Fake container',
+                                                'PhotoIds'  => array()
+                                            );
+                                        }
                                         break;
                                 }
                                 break;
@@ -271,10 +284,12 @@ class IphotoParser {
                             if ($this->levels['DICT']==0) {
                             $this->state = PARSER_IN_ALBUM_LIST;
                             // if the father of this album is the master album
-                            // then, it's just a "rol" album -> don't take it in account
-                            if ($this->album['Parent']!=$this->masterAlbumId
+                            // then, it's just a "roll" album -> don't take it in account
+                            if ($this->showRolls
+                               ||($this->album['Parent']!=$this->masterAlbumId
                                 && ($this->album['AlbumType']!='Photocasts')
-                                && ($this->album['AlbumType']!='Subscribed') ) {
+                                && ($this->album['AlbumType']!='Selected Event Album')
+                                && ($this->album['AlbumType']!='Subscribed') ) ) {
                                 $this->albums[$this->album['AlbumId']] = $this->album;
                             }
                             $this->album = array();
@@ -297,6 +312,14 @@ class IphotoParser {
                             case 'AlbumName':
                             case 'Parent':  // used only to reject "roll" albums
                                 $this->album[$this->key] = $this->content;
+                                break;
+                            case 'RollName':
+                                $this->album['AlbumName'] = $this->content;
+                                break;
+                            case 'RollID':
+                                $this->album['AlbumId'] = $this->content;
+                                $this->album['AlbumType'] = 'Event';
+                                $this->album['Parent'] = EVENT_MASTER_ALBUM;
                                 break;
                             case 'Album Type':  // used only to reject photocast albums
                             case 'AlbumType':

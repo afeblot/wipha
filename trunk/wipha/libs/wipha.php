@@ -455,17 +455,20 @@ class Wipha {
         // Group albums according to their parent name (if they have one). Anyway, each album without parent
         // is added to a 'fake' parent of it's own name.
         foreach ($albumIds as $albumId) {
-            $parentId = $_SESSION['albums'][$albumId]['Parent'];
-            $parentName = $_SESSION['albums'][$parentId]['AlbumName'];
-            $label = $_SESSION['albums'][$albumId]['AlbumName']
-                    . ' (' . count($_SESSION['albums'][$albumId]['PhotoIds']) . ')';
-            if (isset($parentName)) {
-                $albums[$parentName][$albumId] = $label;
-            }  else {
-                $name = $_SESSION['albums'][$albumId]['AlbumName'];
-                $albums[$name][$albumId] = $label;
+            $nbPhotos = count($_SESSION['albums'][$albumId]['PhotoIds']);
+            if ($nbPhotos>0) {
+                $parentId = $_SESSION['albums'][$albumId]['Parent'];
+                $parentName = $_SESSION['albums'][$parentId]['AlbumName'];
+                $label = $_SESSION['albums'][$albumId]['AlbumName'] . ' (' . $nbPhotos . ')';
+                if (isset($parentName)) {
+                    $albums[$parentName][$albumId] = $label;
+                }  else {
+                    $name = $_SESSION['albums'][$albumId]['AlbumName'];
+                    $albums[$name][$albumId] = $label;
+                }
             }
         }
+
         // Clean the album groups so that parent with a single child having the same name becomes this child back.
         $albumsTmp = $albums;
         unset($albums);
