@@ -244,15 +244,16 @@ function isOnLinux() {
 
 //----------------------------------------------
 function controlCacheSize($maxCacheSize) {
+    if ($maxCacheSize==0 || ! is_numeric($maxCacheSize)) { return; } // Security
+    
     $cacheSize = exec("du -ks data/cache | cut -f 1")*1024;
-    if ($cacheSize==0 || ! is_numeric($maxCacheSize)) { return; } // Security
     if ($cacheSize>$maxCacheSize) {
         $listFileInfos = array();
         exec("\\ls -ltr data/cache| awk '/jpg$/ {print $9 \",\" $5}'", $listFileInfos);
         while ((list ($key, $fileInfo) = each($listFileInfos)) && ($cacheSize>$maxCacheSize)) {
             list($file, $size) = explode(",", $fileInfo);
-            $cacheSize -= $size;
             unlink ("data/cache/$file");
+            $cacheSize -= $size;
         }
     }
 }
@@ -289,10 +290,18 @@ function sendImage($path, $cacheTime, $transfoParams=NULL) {
         if ( (! file_exists($cached))||(filemtime($path)>filemtime($cached))) {
             $cmd = $fnctCmd($path, $args, $cached);
             @exec($cmd);
+            if ( ! file_exists($cached)) { // cmd failed, but file may exist, so we will have to check again below
+                die("Scale command failed ($cmd)");
+            }
             chmod($cached, 0664);
             controlCacheSize($transfoParams['cachesize']);
         }
+        if (file_exists($cached)) {
         $path = $cached;   
+    }
+        else {
+            die("File was removed by cache control. You should setup a larger value in wipha.conf");
+        }
     }
 
     session_write_close();
@@ -404,12 +413,15 @@ function imgMagickArgs($transfoParams) {
         $maxHeight = $transfoParams['maxHeight'];
         $quality   = $transfoParams['quality'];
 
+        if ($maxWidth && $maxHeight) {
         $args = "-scale \"$maxWidth"."x".$maxHeight.">\"";
         if ($quality) {
             $args .= " -quality $quality";
         }
-    }
     return $args;
+}
+    }
+    return "";
 }
 
 //----------------------------------------------
