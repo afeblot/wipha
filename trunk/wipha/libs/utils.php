@@ -171,43 +171,65 @@ function applecriptUnicode($unicodeText) {
 //----------------------------------------------
 // (Tries to) return the original file of a Mac alias
 function getMacAliasOriginal($alias, &$error) {
+    if (isOnLinux()) {
+        return $alias;
+    }
     $error = NULL;
     $size = @filesize($alias);
     if ($size===false) {
-        $error = "Can't access to the file";
+        $error = "Cannot access the file '$alias'";
         return NULL;
     } elseif ($size>0) {
         return $alias;
     }
-    $lines = explode(chr(10), shell_exec('strings -a "'.$alias.'/rsrc"'));
-    $nbLines = count($lines);
-    if ($lines[$nbLines-2]!="alis" &&$lines[$nbLines-3]!="alis") {
-        $error = "Seems not to be a mac alias (missing 'alis' as last info):".$lines[$nbLines-3];
+    $original = shell_exec('./getTrueName "'.$alias.'"');
+    if (empty($original)) {
+        $error = "I can't resolve this Mac alias: '$alias'";
         return NULL;
-    }
-    switch ($nbLines) {
-        case 7:
-            $original = $lines[4];
-            $original = preg_replace('/^.?Users/', '/Users', $original);
-            break;
-        case 8:
-            $original = $lines[5].$lines[4];
-            break;
-        default:
-            $error = "Unknown Mac alias type with $nbLines infos";
-            foreach ($lines as $line) {
-                if (preg_match('/^.?Users/', $line)) {
-                    $try = preg_replace('/^.?Users/', '/Users', $line);
-                    if (file_exists($try)) {
-                        $original = $try;
-                        $error = '';
-                        break;
-                    }
-                }
-            }
     }
     return $original;
 }
+
+// //----------------------------------------------
+// // (Tries to) return the original file of a Mac alias
+// function getMacAliasOriginal($alias, &$error) {
+//     $error = NULL;
+//     $size = @filesize($alias);
+//     if ($size===false) {
+//         $error = "Can't access to the file";
+//         return NULL;
+//     } elseif ($size>0) {
+//         return $alias;
+//     }
+//     $lines = explode(chr(10), shell_exec('strings -a "'.$alias.'/rsrc"'));
+//     $nbLines = count($lines);
+//     if ($lines[$nbLines-2]!="alis" &&$lines[$nbLines-3]!="alis") {
+//         $error = "Seems not to be a mac alias (missing 'alis' as last info):".$lines[$nbLines-3];
+//         return NULL;
+//     }
+//     switch ($nbLines) {
+//         case 7:
+//             $original = $lines[4];
+//             $original = preg_replace('/^.?Users/', '/Users', $original);
+//             break;
+//         case 8:
+//             $original = $lines[5].$lines[4];
+//             break;
+//         default:
+//             $error = "Unknown Mac alias type with $nbLines infos";
+//             foreach ($lines as $line) {
+//                 if (preg_match('/^.?Users/', $line)) {
+//                     $try = preg_replace('/^.?Users/', '/Users', $line);
+//                     if (file_exists($try)) {
+//                         $original = $try;
+//                         $error = '';
+//                         break;
+//                     }
+//                 }
+//             }
+//     }
+//     return $original;
+// }
 
 //----------------------------------------------
 // Debug function

@@ -5,6 +5,7 @@ TBZ=wipha.tbz
 INSTALL_SCRIPT=install_script
 PERM=wipha/changeperm
 APACHE_RESTART=apacheRestart
+GET_TRUE_NAME=wipha/getTrueName
 
 default: $(DMG)
 
@@ -15,7 +16,7 @@ $(DMG): $(INSTALLER) help
 $(INSTALLER): $(INSTALL_SCRIPT) build_installer $(TBZ) $(APACHE_RESTART)
 	./build_installer $(INSTALL_SCRIPT) "$@" $(TBZ) $(APACHE_RESTART) "$(VER)"
 
-$(TBZ): $(PERM) FORCE
+$(TBZ): $(PERM) $(GET_TRUE_NAME) FORCE
 	@ cp build_resources/LICENSE.txt wipha/
 	tar jcf "$@" \
         --exclude ".svn" \
@@ -29,9 +30,10 @@ $(TBZ): $(PERM) FORCE
 $(VER): wipha/configs/wipha.conf
 	@ awk -F\" '/version/ {print $$2}' "$<" > "$@"
 
+# Carbon framework only required for getTrueName
 wipha/% : %.c
 	@ echo "Build $@" ; \
-	gcc -Wall -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4 -o "$@" "$<" ; chmod 4755 "$@"
+	gcc -Wall -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4 -o "$@" "$<" -framework Carbon ; chmod 4755 "$@"
 
 % : %.c
 	@ echo "Build $@" ; \
