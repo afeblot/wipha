@@ -56,7 +56,7 @@ class Wipha {
         $this->availableNbRows = array(2, 3, 4, 5, 10, 20, 30, 50);
         $this->availableSearchTypes = array('l'=>'All words',
                                             'y'=>'Any word',
-                                            'r'=>'<a href="http://www.itlab.musc.edu/docs/perl_regexp/" target="_blank">Regexp</a> (perl style)'
+                                            'r'=>'<a href="http://www.regular-expressions.info/quickstart.html" target="_blank">Regexp</a> (perl style)'
                                             );
         $this->availableKwSearchTypes = array('l'=>'All', 'y'=>'Any');
     
