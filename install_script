@@ -139,6 +139,10 @@ test_error $?
 chmod 3777 data/cache 2> $log
 test_error $?
 
+echo
+echo " Remove WiPhA smarty cache files (/tmp/smarty/wipha)"
+rm -rf /tmp/smarty/wipha
+test_error $?
 
 ### Apache configuration ###
 case "$webserver" in
@@ -214,6 +218,9 @@ if [ "$stat" == "drwxrwsrwt" ]; then echo "ok"; else echo "KO ! ($stat)"; err=1;
 echo -n "'changeperm' permission is -rwsr-xr-x: "
 stat=$(stat -f %Sp changeperm)
 if [ "$stat" == "-rwsr-xr-x" ]; then echo "ok"; else echo "KO ! ($stat)"; err=1; fi
+
+echo -n "smarty cache files removed: "
+if [ ! -d "/tmp/smarty/wipha" ]; then echo "ok"; else echo "KO ! (Please delete /tmp/smarty/wipha to make sure wipha new html content is properly displayed)"; err=1; fi
 
 case "$webserver" in
     apache)
