@@ -9,7 +9,7 @@ GET_TRUE_NAME=wipha/getTrueName
 
 default: $(DMG)
 
-$(DMG): $(INSTALLER) help
+$(DMG): $(INSTALLER) help src
 	@ cp build_resources/LICENSE.txt dmgContent/
 	hdiutil create -ov -fs HFS+ -srcfolder dmgContent -volname "WiPhA $(VER)" "$@"
 
@@ -47,6 +47,7 @@ HELP_FILES=install.html \
            history.html
 
 TRGD=dmgContent/doc
+SRCD=dmgContent/src
 TPLD=wipha/templates
 RSCD=build_resources/doc
 IDX=TPLD/help_index.tpl
@@ -63,6 +64,8 @@ help: $(DMG_HELP) $(GUPPY_HELP) FORCE
                         cat intro.html >> index.html; mv index.html intro.html; \
                     fi
 
+src: apacheRestart.c changeperm.c getTrueName.c
+	@ cp $? $(SRCD)/
 # DMG doc from wipha templates
 $(TRGD)/%.html: $(TPLD)/help_%.tpl   $(RSCD)/header.html $(RSCD)/menu.html $(RSCD)/footer.html
 	@ echo "Build $@" ; \
@@ -96,7 +99,7 @@ guppydoc/%.html: $(RSCD)/%.html
 FORCE:
 
 clean:
-	@ rm -rf $(TBZ) $(DMG) $(INSTALLER) $(DMG_HELP) $(GUPPY_HELP) $(APACHE_RESTART) dmgContent/doc/img/* dmgContent/LICENSE.txt
+	@ rm -rf $(TBZ) $(DMG) $(INSTALLER) $(DMG_HELP) $(GUPPY_HELP) $(APACHE_RESTART) $(PERM) $(GET_TRUE_NAME) dmgContent/doc/img/* dmgContent/LICENSE.txt
 
 essai.app: 
 	./build_installer essai_script "$@" pipo "$(VER)"
