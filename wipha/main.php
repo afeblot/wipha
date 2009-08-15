@@ -50,7 +50,7 @@ require_once('libs/http-conditional.php');
 httpConditional(time(), 0, 0, false, false, false);
 
 
-$login =& new Login(false);
+$login = new Login(false);
 if (isset($_GET['logout'])) {
     $login->logout();
     exit;
@@ -66,7 +66,7 @@ if (isset($_GET['logout'])) {
 // the lib has changed.
 // Other search requests may contain a lib param (when called from a mail for instance)
 // So, wipha loads the requested lib (if needed) and unset $GET['lib'].
-$wipha =& new Wipha($_GET);
+$wipha = new Wipha($_GET);
 
 $action = 'unknown';
 $get = array_keys($_GET);
