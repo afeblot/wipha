@@ -37,6 +37,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
 require_once('utils.php');
 
+date_default_timezone_set('UTC');
+
 //=============================================================================
 class Session {
 

@@ -47,7 +47,7 @@ class Login {
 
     //----------------------------------------------
     function Login($requestAdmin) {
-        $this->smarty =& new SmartyApp();
+        $this->smarty = new SmartyApp();
 
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $this->doHTTPLogin($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW']);
@@ -73,7 +73,7 @@ class Login {
     
     //----------------------------------------------
     function displayLoginForm() {
-        $users =& new Users;
+        $users = new Users;
         $this->smarty->assign('defaultAdmin', $users->isDefaultAdmin());
         $this->smarty->display('login.tpl');
         exit;
@@ -89,7 +89,7 @@ class Login {
         } else {
             // Login ok
             $_SESSION['user']=$user;
-            $users =& new Users;
+            $users = new Users;
             $_SESSION['is_admin'] = ($users->admin()==$user);
         }
     }
@@ -110,7 +110,7 @@ class Login {
             } else {
                 // Login ok
                 $_SESSION['user']=$user;
-                $users =& new Users;
+                $users = new Users;
                 $_SESSION['is_admin'] = ($users->admin()==$user);
                 $loginUrl = $_SESSION['loginUrl'];
                 unset($_SESSION['loginUrl']);
@@ -125,13 +125,13 @@ class Login {
     // Do whatever you want here to authentificate your user
     //----------------------------------------------
     function authentificate($user, $passwd) {
-        $users =& new Users;
+        $users = new Users;
         return $users->authentificate($user, $passwd);
     }
 
     //----------------------------------------------
     function logout() {
-        $session =& new Session();
+        $session = new Session();
         $session->destroy();
         reloadUrl("main.php");
     }

@@ -43,8 +43,8 @@ new Session('wipha');
 require_once('libs/login.php');
 require_once('libs/wipha.php');
 
-$login =& new Login(false);
-$wipha =& new Wipha($foo);
+$login = new Login(false);
+$wipha = new Wipha($foo);
 
 $action = 'unknown';
 $get = array_keys($_GET);

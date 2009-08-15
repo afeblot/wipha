@@ -177,7 +177,7 @@ class Users extends Persistent {
             if ($key!==false) {
                 unset($albums[$key]);
             }
-            $libs =& new Libraries();
+            $libs = new Libraries();
             if ( ! $libs->exists($libid)) {
                 $error = NO_SUCH_LIB;
                 return false;
