@@ -362,35 +362,9 @@ function sendVideo($path, $cacheTime) {
     $mimetype = videoMimetype($path);
     header("Content-Type: $mimetype");
     if ( ! httpConditional(filemtime($path), $cacheTime, 0, false, false, false)) {
-        $filesize = filesize($path);
-        header("Content-Length: $filesize");
-
-        if ( isset($_SERVER['HTTP_RANGE']) ) {
-            $partialContent = true;
-
-            list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
-            $range  = explode('-', $range);
-            $offset = $range[0];
-            $end    = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $filesize;
-
-            header("Accept-Ranges: $offset-$filesize");
-            header('HTTP/1.1 206 Partial Content');
-            header("Content-Range: bytes $offset-$end/$filesize");
-
-        } else {
-            $partialContent = false;
-
-            $offset = 0;
-            header('Accept-Ranges: bytes');
-        }
-
-        $file = fopen($path, 'rb');
-        fseek($file, $offset, 0);
-
-        while(!feof($file)) {
-            print fread($file, 4096);
-        }
-        fclose($file);
+        header("Content-Length: " . filesize($path));
+        //header('Content-Disposition: attachment; filename="' . basename($path) .'"');
+        _readfile($path);
     }
     exit;
 }

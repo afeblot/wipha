@@ -68,17 +68,25 @@ fieldset ul li{
     list-style-image:none;
 }
 
-/*----------------------- IE6 NO MORE -----------------------*/
-.ie6_1 { margin: 10px; border: 1px solid #F7941D; background: #FEEFDA; text-align: center; clear: both; height: 75px; position: relative; }
-.ie6_2 { position: absolute; right: 3px; top: 3px; font-family: Arial, sans-serif; font-weight: bold; }
-.ie6_3 { width: 640px; margin: 0 auto; text-align: left; padding: 0; overflow: hidden; color: black; }
-.ie6_4 { width: 75px; float: left; }
-.ie6_5 { width: 275px; float: left; font-family: Arial, sans-serif; }
-.ie6_6 { font-size: 14px; font-weight: bold; margin-top: 12px; }
-.ie6_7 { font-size: 12px; margin-top: 6px; line-height: 12px; }
-.ie6_8 { width: 75px; float: left; }
-.ie6_9 { width: 73px; float: left; }
+/*----------------------- TOO COOL FOR IE -----------------------*/
+.toolcoolforie {
+    padding: 10px;
+    margin: 10px;
+    height: 80px;   /* understood as min-height by IE*/
+    border: 1px solid #cc0000;
+    background-color: #ff99cc;   
+    font-size: 125%;
+}
 
+html>body .toolcoolforie {   /* not taken in account by IE */
+    min-height: 80px;
+}
+
+.toolcoolforie img {
+    border: none;
+    float: left;
+    margin-right: 10px;
+}
 
 /*----------------------- HEADER MENU -----------------------*/
 .menu {

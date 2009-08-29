@@ -44,8 +44,15 @@
 {/if}
         </div>
 
-{include file="ie6nomore.tpl"}
-
+{if $smarty.session.browser.app == 'MSIE' }
+<div class="toolcoolforie">
+        <img alt="Too cool for IE" title="Too cool for Internet Explorer"
+             src="skin/{#skin#}/too_cool_badge.gif"/>
+    This web site is designed to work with any <strong><a href="http://www.w3.org">W3C</a> standard compliant browser</strong>.
+    You are currently using Internet Explorer which is not able to properly render the site.
+    I would advise you to begin using a real browser. You might choose Firefox or Opera.
+</div>
+{/if}
 {if isset($newVer)}
 <div class="note">
     WiPhA version <strong>{$newVer.ver}</strong>

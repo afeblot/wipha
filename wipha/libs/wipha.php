@@ -60,7 +60,7 @@ class Wipha {
                                             );
         $this->availableKwSearchTypes = array('l'=>'All', 'y'=>'Any');
     
-        $this->smarty = new SmartyApp();
+        $this->smarty =& new SmartyApp();
 
         if ( ! $_COOKIE['searchbarType']) {
             setcookie('searchbarType', 'simple', 0, '/');
@@ -154,7 +154,7 @@ class Wipha {
         $_SESSION['keywords'] = array();
         $_SESSION['library'] = NULL;
 
-        $libs = new Libraries();
+        $libs =& new Libraries();
         $lib = $libs->lib($libId);
         $libFile = $lib['path'].'/AlbumData.xml';
 
@@ -241,7 +241,7 @@ class Wipha {
         // User dependant part: create restricted master album, filter keywords
         // ********************************************************************
 
-        $users = new Users();
+        $users =& new Users();
         $userFilecache = "data/cache/user_".$_SESSION['user']."_$libId.ser";
         if ( (file_exists($userFilecache)) &&
              (filemtime($libFile)<filemtime($userFilecache)) &&
@@ -328,7 +328,7 @@ class Wipha {
 
     //----------------------------------------------
     function parseDataFile($libFile, $srcUrl) {
-        $parser = new IphotoParser($libFile);
+        $parser =& new IphotoParser($libFile);
         $silent = $this->silentLoad() || empty($srcUrl);
         $versionOk = true;
         $version = "";
@@ -441,7 +441,7 @@ class Wipha {
         }
 
         // Get a list of all authorized albums
-        $users = new Users();
+        $users =& new Users();
         if ($_SESSION['is_admin'] || $users->hasFullAccess($_SESSION['library']['id'], $_SESSION['user'])) {
             $albumIds = array_keys($_SESSION['albums']);
         } else {
@@ -552,12 +552,12 @@ class Wipha {
 
     //----------------------------------------------
     function authorizedLibs() {
-        $libs = new Libraries();
+        $libs =& new Libraries();
         if ($_SESSION['is_admin']) {
             return $libs->libList();
         }
 
-        $users = new Users();
+        $users =& new Users();
         $authLibs = array();
         foreach ($libs->libList() as $libId=>$lib) {
             if (count($users->userAlbums(   $libId, $_SESSION['user']))>0 ||
@@ -580,7 +580,7 @@ class Wipha {
 
    //----------------------------------------------
      function isAuthorizedAlbum($albumId, $libId=NULL) {
-        $users = new Users();
+        $users =& new Users();
         $libId = isset($libId) ? $libId : $_SESSION['library']['id'];
         return ($_SESSION['is_admin'] ||
             $users->hasFullAccess($libId, $_SESSION['user']) ||
@@ -789,7 +789,7 @@ class Wipha {
 
     //----------------------------------------------
     function displayAdminForm() {
-        $users = new Users();
+        $users =& new Users();
         if (is_array($_SESSION['albums'])) {
             foreach($_SESSION['albums'] as $id=>$data) {
                 if (is_numeric($id)) {
@@ -797,7 +797,7 @@ class Wipha {
                 }
             }
         }
-        $libs = new Libraries();
+        $libs =& new Libraries();
 
         $this->smarty->assign('logins', $users->userList());
         $this->smarty->assign('admin', $users->admin());
@@ -887,7 +887,7 @@ class Wipha {
 
     //----------------------------------------------
     function displayAdminUserForm($login) {
-        $users = new Users();
+        $users =& new Users();
         if ($login==$users->admin()) {
             die("Admin have all albums access...");
         }
@@ -913,7 +913,7 @@ class Wipha {
 
     //----------------------------------------------
     function displayAdminAlbumForm($album) {
-        $users = new Users();
+        $users =& new Users();
         $_SESSION['editedAlbum'] = $album; // Memorize the edited album
         $this->smarty->assign('album', $_SESSION['albums'][$album]['AlbumName']);
         $this->smarty->assign('albumUsers', $users->albumUsers($_SESSION['library']['id'], $album));
@@ -924,7 +924,7 @@ class Wipha {
 
     //----------------------------------------------
     function displayAdminLibForm($id) {
-        $libs = new Libraries();
+        $libs =& new Libraries();
         $lib = $libs->lib($id);
         $this->smarty->config_load('wipha.conf');
         $demo = $this->smarty->get_config_vars('demo');
@@ -941,7 +941,7 @@ class Wipha {
         $this->smarty->config_load('wipha.conf');
         $demo = $this->smarty->get_config_vars('demo');
         if ( ! $demo) {
-            $users = new Users();
+            $users =& new Users();
             $users->updateAdmin($login, $passwd, $error);
             $_SESSION['user'] = $users->admin();
         } else {
@@ -958,7 +958,7 @@ class Wipha {
         if ($_SESSION['editedUser']=='guest' && $demo) {
             $error = DEMO_GUEST;
         } else {
-            $users = new Users();
+            $users =& new Users();
             $users->updateUser($_SESSION['library']['id'], $_SESSION['editedUser'], $login, $passwd, $albums, $error);
         }
         if (isset($error)) {
@@ -983,7 +983,7 @@ class Wipha {
             }
         }
 
-        $users = new Users();
+        $users =& new Users();
         $users->updateAlbum($_SESSION['library']['id'], $_SESSION['editedAlbum'], $logins);
 
         if (isset($error)) {
@@ -997,7 +997,7 @@ class Wipha {
     
    //----------------------------------------------
     function addUser($login, $passwd) {
-        $users = new Users();
+        $users =& new Users();
         $ret = $users->addUser($login, $passwd, $error);
         $this->smarty->assign('error_user', $error);
         $this->displayAdminForm();
@@ -1005,7 +1005,7 @@ class Wipha {
     
     //----------------------------------------------
     function deleteUser($login) {
-        $users = new Users();
+        $users =& new Users();
         $ret = $users->deleteUser($login);
         $this->displayAdminForm();
     }
@@ -1017,7 +1017,7 @@ class Wipha {
         if ($demo) {
             $error = DEMO_LIB;
         } else {
-            $libs = new Libraries();
+            $libs =& new Libraries();
             $libs->updateLib($id, $path, $name, $error);
         }
 
@@ -1039,7 +1039,7 @@ class Wipha {
         if ($demo) {
             $error = DEMO_LIB;
         } else {
-            $libs = new Libraries();
+            $libs =& new Libraries();
             $libs->addLib($path, $name, $error);
             $_SESSION['nblibrary'] = $libs->nb();
         }
@@ -1054,7 +1054,7 @@ class Wipha {
         if ($demo) {
             $error = DEMO_LIB;
         } else {
-            $libs = new Libraries();
+            $libs =& new Libraries();
             $libs->deleteLib($id);
             $_SESSION['nblibrary'] = $libs->nb();
         }
@@ -1411,7 +1411,7 @@ class Wipha {
             die("No access to this album");
         }
 
-        $libs = new Libraries();
+        $libs =& new Libraries();
         $lib = $libs->lib($libId);
         $libPath = $lib['path'].'/';
         $libFile = $libPath.'AlbumData.xml';
@@ -1461,7 +1461,7 @@ class Wipha {
 
     //----------------------------------------------
     function sendPhotocastImage($libId, $path, $compress) {
-        $libs = new Libraries();
+        $libs =& new Libraries();
         $lib = $libs->lib($libId);
         if (! is_array($lib)) die("No such lib");
 
@@ -1475,7 +1475,7 @@ class Wipha {
 
     //----------------------------------------------
     function displayPhotocastSlide($libId, $path) {
-        $smarty = new SmartyApp();
+        $smarty =& new SmartyApp();
         $smarty->assign('path', $path);
         $smarty->assign('libId', $libId);
         $smarty->display('photocastthumb.tpl');

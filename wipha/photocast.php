@@ -56,7 +56,7 @@ if (empty($_SESSION['user'])) {
     }
 
     // Authentification
-    $users = new Users();
+    $users =& new Users();
     $user = isset($_GET['guest']) ? 'guest' : $_SERVER['PHP_AUTH_USER'];
     if (!isset($user)) {
         header('WWW-Authenticate: Basic realm="WiPhA photocast"');
@@ -82,7 +82,7 @@ if (isset($_GET['guest'])) {
 // fwrite($fd, "* auth=".$_SERVER['PHP_AUTH_USER'].", usr=".$_SESSION['user']."(".$_SESSION['is_admin'].")\n");
 // fclose($fd);
 
-$wipha = new Wipha($foo);
+$wipha =& new Wipha($foo);
 
 $action = 'unknown';
 $get = array_keys($_GET);
