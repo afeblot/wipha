@@ -1,4 +1,4 @@
-{if $smarty.session.browser.app = 'MSIE' && version_compare($smarty.session.browser.version, '7.0', '<')}
+{if $smarty.session.browser.app == 'MSIE' && version_compare($smarty.session.browser.version, '7.0', '<')}
   <div class="ie6_1">
     <div class="ie6_2"><a href='#' onclick='javascript:this.parentNode.parentNode.style.display="none"; return false;'><img src='http://www.ie6nomore.com/files/theme/ie6nomore-cornerx.jpg' style='border: none;' alt='Close this notice'/></a></div>
     <div class="ie6_3">
