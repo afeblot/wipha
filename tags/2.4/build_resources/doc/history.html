@@ -1,0 +1,152 @@
+<h1>WIPHA HISTORY</h1>
+
+<h3>Version 2.4 (17 May 2009)</h3>
+<ul>
+    <li>[new] Add 'Events' in the albums Combo Box (iPhoto 7)</li>
+</ul>
+<ul>
+    <li>[fix] Much more robust mac alias resolving with a command line helper (for iPhoto 6 libs with photos not imported in the lib folder)</li>
+    <li>[fix] The download system did not work with Safari (since when?)</li>
+    <li>[fix] The mail icon is not displayed anymore on the "Selected for download" special album</li>
+    <li>[fix] The photocast URL taken from the photocast icon is the 'guest' one when logged as guest (meaning no authentication will be required in a RSS reader)</li>
+    <li>[fix] Remove smarty cache files on WiPhA installtion to make sure new html content in taken into account</li>
+</ul>
+<ul>
+    <li>The C source code of WiPhA helpers is delivered in the package</li>
+</ul>
+
+<h3>Version 2.3 (27 Jan 2008)</h3>
+<ul>
+    <li>[new] <strong>Installer is Leopard compatible</strong></li>
+</ul>
+<ul>
+    <li>[fix] The installer can now properly restart the web server (solves some "<tt>You don't have permission to access /~xxxx/wipha/ on this server</tt>" messages)</li>
+    <li>[fix] Fix version check for system where file_get_contents is not implemented</li>
+    <li>[fix] Remove an occasional strstr warning message</li>
+    <li>[fix] Use the library path defined in the library xml file if it is defined, rather than the path given to WiPhA</li>
+    <li>[fix] Replace a mv by cp+rm in the installer, as mv hung on certain occasions</li>
+</ul>
+
+<h3>Version 2.2 (3 Sep 2006)</h3>
+<ul>
+    <li>[new] <strong>Now handles iPhoto movies too</strong></li>
+    <li>[new] The number of columns in the thumb page adapts itself to the browser window width</li>
+    <li>[new] Dramatically speeds up libraries loading by caching data as much as possible (after initial loading)</li>
+    <li>[new] Photos data (Exif) remain displayed as long as the user doesn't hide them again</li>
+    <li>[new] Adds a configurable cache size limit by removing the oldest cached images</li>
+    <li>[new] Adds a check for unsupported iPhoto versions (older than iPhoto 4)</li>
+    <li>[new] The installer and application helper are now Universal Binaries</li>
+</ul>
+<ul>
+    <li>[fix] No more refresh issue after the login, logout or library select page (appeared on systems with proxies)</li>
+    <li>[fix] Fixed the prefetch feature during slideshows (Mozilla family only)</li>
+    <li>[fix] An url pointing to a specific picture, with the guest login parameter now works if the user is already logged</li>
+    <li>[fix] WiPhA now keeps working while loading a large picture or a movie in an other window</li>
+    <li>[fix] Solved some 30s timeout when working on huge libraries (24k+)</li>
+    <li>[fix] A photocast could fail if some picture title or comment contained forbidden html characters</li>
+    <li>[fix] Hides the real server file path in the session cookie</li>
+    <li>[fix] Avoids multiple session cookies to be created on successive login/logout</li>
+    <li>[fix] Fix bug avoiding to access some (old?) Libraries (don't rely anymore on "Archive Path" which may be null)</li>
+    <li>[fix] Properly displays a thumb obtained by clicking a wipha link item in a RSS reader</li>
+    <li>[fix] Displays Exif info when using the "Don't store files in iPhoto" option, and improve the original file search algorithm </li>
+</ul>
+<ul>
+    <li>Reworked WiPhA and installer icons</li>
+    <li>Made the guest login more visible for dumb users</li>
+    <li>The help page opens in a new window</li>
+    <li>Replaced some ajax calls by using cookies</li>
+</ul>
+
+<h3>Version 2.1 (29 Mar 2006)</h3>
+<ul>
+    <li>[new] Uses Image Magick on non-Apple systems for image resize and compression</li>
+    <li>[new] Displays EXIF data on request in the slideshow mode</li>
+    <li>[new] Hierarchical folders/albums view in the search bar</li>
+    <li>[new] Adds a Paypal donation button in the main admin page</li>
+</ul>
+<ul>
+    <li>[fix] WiPhA may now be installed on more than one account on the same computer</li>
+    <li>[fix] Correct the 'forbidden access' bug (commented the mod_rewrite php-cgi setting)</li>
+</ul>
+
+<h3>Version 2.0 (22 Fev 2006)</h3>
+<ul>
+    <li>[new] <strong>Photocast your albums without .mac !</strong></li>
+    <li>[new] <strong>Works with PHP5 (Entropy package) and PHP4 (Default OSX)</strong></li>
+    <li>[new] Libraries list only shows allowed ones</li>
+    <li>[new] Compresses slideshow images to improve download speed</li>
+    <li>[new] Prefetches next slide during slidehow (works only on Mozilla family browsers)</li>
+</ul>
+<ul>
+    <li>[fix] Solved a wrong date map blocks sorting (appeared if iPhoto was not sorting by time)</li>
+    <li>[fix] Forbids searching a reverse time period (ex: 23 - 15 Aug 2005)</li>
+    <li>[fix] Now properly supports multiple simultaneous block openings in the date map</li>
+    <li>[fix] Now clears the keywords field when starting a search in simple mode</li>
+    <li>[fix] Doesn't show the subscribed photocast albums anymore in the search bar album list</li>
+</ul>
+<ul>
+    <li>Rewrote the authentication system with a http auth for rss access</li>
+    <li>The "new version available" note is displayed on every page the first 20
+        sec of each login (as admin)</li>
+    <li>Don't display anymore the second search bar and pager when not necessary
+        in the thumbnails page (when 1 to 6 thumbnails on the page)</li>
+    <li>Shows a "loading" wheel while waiting for data in the date map</li>
+    <li>Improved documentation presentation</li>
+</ul>
+
+<h3>Version 1.0 (15 Fev 2006)</h3>
+<ul>
+    <li>[new] <strong>Multiple libraries management</strong></li>
+    <li>[new] Filter on keywords</li>
+    <li>[new] Users can be set to have full access to a library (access to all library albums)</li>
+    <li>[new] Generates mails with a link to the displayed pictures</li>
+    <li>[new] Security: no data file is accessed through a direct URL anymore</li>
+    <li>[new] Import script improvements:
+        <ul>
+            <li>No need anymore to launch the script editor and click the run button</li>
+            <li>No need anymore to manually select the Photos folder</li>
+        </ul>
+    </li>
+    <li>[new] Installer improvements:
+        <ul>
+            <li>Automatically starts or restart the web server</li>
+            <li>Automatically opens the WiPhA login page in the browser</li>
+            <li>Updates all files date to force reloading new versions</li>
+        </ul>
+    </li>
+    <li>[new] 'Credits' page</li>
+</ul>
+<ul>
+    <li>[fix] Logins are not case sensitive anymore</li>
+    <li>[fix] Forbids direct access to AlbumData.xml</li>
+    <li>[fix] Removed a wrong warning stating the Library folder was not readable</li>
+    <li>[fix] Solved the date map which could be too small on Safari and hide the OK button</li>
+    <li>[fix] Solved the year bloc duplication when clicking in the date map background if the library had only photos taken during a single year</li>
+</ul>
+<ul>
+    <li>Changed the slideshow default delay to 10 seconds</li>
+    <li>The "Download" menu button is replaced by a link in the search bar</li>
+    <li>Improved IE (a little) and Opera support</li>
+    <li>A few style changes, minor improvements, minor bug fix</li>
+</ul>
+
+<h3>Version 0.7 (31 Jan 2006)</h3>
+<ul>
+    <li>[new] <strong>Add a slideshow mode (manual and automatic)</strong></li>
+    <li>[new] Add a default simple mode to the search bar.</li>
+    <li>[new] Add some prerequisite permission checks.</li>
+</ul>
+<ul>
+    <li>[fix] Solved displaying a full size photo on Safari</li>
+    <li>[fix] Solved 2 clicks needed on Safari to unselect a picture which had been displayed selected</li>
+    <li>[fix] Solved the php time limit which could be reached when parsing big (about 15000 photos) libraries</li>
+</ul>
+<ul>
+    <li>Security improvments</li>
+    <li>Add some checks in the installer</li>
+</ul>
+
+<h3>Version 0.6 (27 Jan 2006)</h3>
+<ul>
+    <li>First public release</li>
+</ul>
