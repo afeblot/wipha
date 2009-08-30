@@ -154,8 +154,9 @@ class IphotoParser {
     //---------------------------------------------------------
     // Parses a little bif of the file and returns the percentage parsed.
     function parseLittle() {
-    
+
         $data = fread($this->fp, 4096);
+
        // Parse each 4KB chunk with the XML parser created above
        xml_parse($this->xml_parser, $data, feof($this->fp))
            // Handle errors in parsing
@@ -215,6 +216,13 @@ class IphotoParser {
                 }
                 break;
             case PARSER_IN_ALBUM:
+                switch ($name) {
+                    case 'DICT':
+                        $this->levels['DICT']++;
+                        break;
+                }
+                break;
+            case PARSER_IN_PHOTO:
                 switch ($name) {
                     case 'DICT':
                         $this->levels['DICT']++;
@@ -281,7 +289,7 @@ class IphotoParser {
                 switch ($name) {
                     case 'DICT':
                         $this->levels['DICT']--;
-                            if ($this->levels['DICT']==0) {
+                        if ($this->levels['DICT']==0) {
                             $this->state = PARSER_IN_ALBUM_LIST;
                             // if the father of this album is the master album
                             // then, it's just a "roll" album -> don't take it in account
@@ -366,12 +374,15 @@ class IphotoParser {
             case PARSER_IN_PHOTO:
                 switch ($name) {
                     case 'DICT':
-                        $this->state = PARSER_IN_PHOTO_LIST;
-// // //                         if (($this->photo['MediaType']=='Image')||(!isset($this->photo['MediaType']))) {
+                        $this->levels['DICT']--;
+                        if ($this->levels['DICT']==0) {
+                            $this->state = PARSER_IN_PHOTO_LIST;
+// // //                            if (($this->photo['MediaType']=='Image')||(!isset($this->photo['MediaType']))) {
                             $this->photos[$this->photo['PhotoId']] = $this->photo;
-// // //                         }
-                        $this->photo = array();
-                        //echo '------------------------------<br>';
+// // //                            }
+                            $this->photo = array();
+                            //echo '------------------------------<br>';
+                        }
                         break;
                     case 'KEY':
                         $this->key = $this->content;
