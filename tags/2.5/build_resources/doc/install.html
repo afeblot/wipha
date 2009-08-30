@@ -1,0 +1,132 @@
+<h1>WIPHA INSTALLATION</h1>
+
+<ul class="sum">
+    <li><a href="#inst">INSTALLING</a></li>
+    <li><a href="#dis">DISCLAIMER</a>
+        <ul>
+            <li><a href="#start">STARTING</a></li>
+            <li><a href="#connect">CONNECTING TO WIPHA</a></li>
+        </ul></li>
+</ul>
+
+<a name="inst"><h2>INSTALLING</h2></a>
+
+<p>To install WiPhA on Mac OS X, just run the WiPhA installer application. You
+will be prompted for an administrator login/password, since the installer will
+modify the web server configuration. At the end of the installation, the web
+server will be started or restarted and the WiPhA login page will open in your
+browser (bookmark the address for future easy use).</p>
+
+<div class="note"><p>WiPhA is not a Mac application. WiPhA is a web site, and thus,
+is installed as a new subdirectory of your personal website directory:
+<tt>/Users/&lt;user&gt;/Sites/<strong>wipha</strong></tt></p>
+<p><tt>&lt;user&gt;</tt> is your short user name. See below for more information.</div>
+
+<p> For those who don't like to give their admin password without knowing what will be
+done, here is the exact list of actions requiring these privileges: </p>
+
+<ul>
+    <li> Lets Apache deal with php (not default enabled by Apple)
+	    <ul>
+            <li> uncomments 2 lines in <tt>/etc/httpd/httpd.conf</tt> and backups your
+                 previous file </li>
+        </ul>
+    </li>
+    <li> Enables local <tt>.htaccess</tt> file to protect WiPhA from external attacks
+         without modifying the general configuration
+	    <ul>
+            <li> adds 3 lines at the end of <tt>/etc/httpd/httpd.conf</tt> and backups
+            your previous file if not already done</li>
+        </ul>
+    </li>
+</ul>
+
+<p> Other permission modifications performed by the installer: </p>
+
+<ul>
+    <li> Sets WiPhA data directories so that Apache (www) can write in them (user logins,
+         thumb cache)
+	    <ul>
+	        <li><tt> chmod 3777 data data/cache</tt> (777 + setgid + sticky)</li>
+        </ul>
+    </li>
+    <li> Sets the setuid bit (with user right, not root!) on a small C program
+         which will chmod o+r or o+x the required iPhoto Library files or directories.
+         This has proved to be needed for different iPhoto versions which remove
+         these rights on every modification or file creation, whatever your umask
+         is (I hate that).<br/>
+         For security reason, this program can only be run by you and Apache (www).
+	    <ul>
+            <li><tt> chmod 4755 changeperm </tt></li>
+        </ul>
+    </li>
+</ul>
+
+<div class="warn"> If you move this C program which corrects permissions,  it
+looses its priviledge to perform its task. It would then be likely that newly
+modified photos won't be accessible to WiPhA. WiPhA ensures that the proper
+permissions are set and will warn you (and stop) if they're not. This issue can
+easily be solved:
+<ul>
+    <li>Open the <em>Terminal</em> program (in <tt>/Applications/Utilities</tt>)</li>
+    <li>type the following command: <tt>chmod 4755 /Users/&lt;user&gt;/Sites/wipha/changeperm</tt></li>
+</ul>
+You can also simply re-install WiPhA which will set this again.
+</div>
+
+<a name="dis"><h2>DISCLAIMER</h2></a>
+
+<p>The installer does start the Web server and launches WiPhA in your browser. Would you want
+however to perform these (simple) operations by yourself, here's how to do it.</p>
+
+<a name="start"><h3>STARTING</h3></a>
+
+<p>You will use 3 System Preference panels.</p>
+
+<div class="image">
+<img src="img/systempref.jpg" alt="System Pref Window"/>
+<p>In the system preferences panel, choose the <strong>Sharing panel</strong> 
+<ref>3</ref>.</p>
+</div>
+
+<div class="image">
+<img src="img/share.jpg" alt="Share Pref Panel"/>
+<p><strong>Sharing panel</strong> <ref>3</ref>: click on the Personal Web
+Sharing item to start the server.</p>
+</div>
+
+<a name="connect"><h3>CONNECTING TO WIPHA</h3></a>
+
+<p> Now, you just have to know which URL to type in your browser to discover WiPhA. This
+URL has the form: </p>
+
+<p><tt><big>
+http://<strong>your_IP_address</strong>/~<strong>your_short_user_name</strong>/wipha
+</big></tt></p>
+
+<div class="note">
+On AZERTY keyboards, the tilde <strong>~</strong> character can be obtained by
+typing <kbd>Option</kbd>+<kbd>n</kbd> then <kbd>space</kbd>. On QWERTY keyboards,
+it is usually found in the upper left corner.
+</div>
+
+<div class="note">When the server is started, the <strong>Sharing panel</strong> 
+<ref>3</ref> may display an URL to access your web site. This URL uses a host
+name equivalent to your IP address.</div>
+
+<p>If needed, you may find your IP address in the system preference
+<strong>Network panel</strong> <ref>1</ref>, and your short user name in the
+<strong>Accounts panel</strong> <ref>2</ref>.</p>
+
+<div class="image">
+<img src="img/network.jpg" alt="Network pref Panel"/>
+<p><strong>Network panel</strong> <ref>1</ref>: find your IP address</p>
+</div>
+
+<div class="image">
+<img src="img/accounts.jpg" alt="Accounts Pref Panel"/>
+<p><strong>Accounts panel</strong> <ref>2</ref>: find  your short user name</p>
+</div>
+
+<p>You now have all you need to know your URL to WiPhA. Get Safari, or your
+preferred browser, and go to this address to view the WiPhA login page.</p>

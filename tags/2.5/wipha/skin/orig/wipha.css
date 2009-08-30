@@ -1,0 +1,543 @@
+body {
+    margin:0;
+    font-family: arial,sans-serif;
+    font-size: 12px;
+    background-color: #fff;
+    color: #000;
+}
+
+.page {
+    margin: 1em;
+}
+
+.login {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.footer div {
+    padding: 10px;
+}
+
+.error {
+    color: red;
+}
+
+a.perm {
+    color: blue;
+}
+
+a img {
+    border: none;
+}
+
+/*----------------------- LOGIN PANEL -----------------------*/
+#loginpanel p {
+    font-style: italic;
+    margin-bottom: 2em;
+}
+
+#loginpanel .error {
+    height: 2em;
+}
+
+/*----------------------- ADMIN SECTION -----------------------*/
+fieldset legend {
+    font-size: 120%;
+    font-weight: bold;
+}
+
+fieldset {
+    background-color: #e8e8e8;
+    margin-bottom: 20px;
+    padding-top:10px;
+}
+
+fieldset a {
+    color: #000;
+}
+
+fieldset ul li{
+    list-style-image:none;
+}
+
+/*----------------------- IE6 NO MORE -----------------------*/
+.ie6_1 { margin: 10px; border: 1px solid #F7941D; background: #FEEFDA; text-align: center; clear: both; height: 75px; position: relative; }
+.ie6_2 { position: absolute; right: 3px; top: 3px; font-family: Arial, sans-serif; font-weight: bold; }
+.ie6_3 { width: 640px; margin: 0 auto; text-align: left; padding: 0; overflow: hidden; color: black; }
+.ie6_4 { width: 75px; float: left; }
+.ie6_5 { width: 275px; float: left; font-family: Arial, sans-serif; }
+.ie6_6 { font-size: 14px; font-weight: bold; margin-top: 12px; }
+.ie6_7 { font-size: 12px; margin-top: 6px; line-height: 12px; }
+.ie6_8 { width: 75px; float: left; }
+.ie6_9 { width: 73px; float: left; }
+
+
+/*----------------------- HEADER MENU -----------------------*/
+.menu {
+    border-bottom: 1px solid #ddd;
+    background-color: #e8e8e8;
+    text-align: center;
+    padding: 5px;
+    min-height: 18px;
+    font-size: 14px;
+}
+
+.menu a, a.button {
+    border: 1px solid #7d7d7d;
+    background: url(buttonbg.png) repeat-x;
+    color: #444;
+    font-size: 12px;
+    text-decoration: none;
+    padding-top: 2px; padding-bottom: 2px;
+    padding-left: 5px; padding-right: 5px;
+}
+
+.menu a.photocast {
+    border: none;
+    background: url(photocast.png) no-repeat;
+    padding-top: 2px; padding-bottom: 2px;
+    padding-left: 5px; padding-right: 5px;
+}
+.menu a.photocast:hover {
+    border: none;
+    background: url(photocasthov.png) no-repeat;
+}
+
+.menu a:hover, a.button:hover {
+    border: 1px solid #5786b6;
+    background: url(buttonbghov.png) repeat-x;
+}
+
+.menu a.right {
+    float: right;
+    margin-left: 5px;
+}
+
+.menu .left {
+    float: left;
+    color: #777;
+}
+
+/*----------------------- FORMS -----------------------*/
+
+input, select {
+    font-family: arial,sans-serif;
+    font-size: 100%;
+    font-weight: normal;
+    margin-top: 5px;
+}
+
+input[type=text], input[type=password], textarea, select {
+    background: url(input-shadow.gif) no-repeat -3px -3px;
+    border: 1px solid #888;
+}
+
+input[type=text], input[type=password] {
+    padding-left: 3px;
+}
+
+input[type=submit] {
+    font-weight: bold;
+}
+
+input[type=submit], input[type=button] {
+    color: #444;
+    border: 1px solid #7d7d7d;
+    background: url(buttonbg.png) repeat;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+input[type=submit]:hover, input[type=button]:hover {
+    border: 1px solid #5786b6;
+    background: url(buttonbghov.png) repeat;
+}
+
+input[type=button][disabled=true] {
+    color: #888;
+    border: 1px solid #aaa;
+    background: url(buttonbgdis.png) repeat;
+}
+
+option, optgroup {
+    background-color:#fff; 
+    border: none;
+}
+
+/*----------------------- SEARCH BAR -----------------------*/
+
+.search {
+    position: relative;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    background-color: #e8e8e8;
+    padding: 5px;
+    padding-top: 0;
+    margin: 0;
+}
+
+
+.searchresults {
+    position: absolute;
+    right:0;
+    border-top: 1px solid #ccc;
+    background-color: #e0e0e0;
+    padding: 5px;
+    margin: 0;
+    padding-right: 200px;
+}
+.search>.searchresults {    /* this way not to be seen by IE */
+    bottom:0;
+}
+
+.simple .searchresults {
+    padding-top:0;
+    padding-bottom:0;
+    height:100%;
+    padding-right: 100px;
+}
+
+.simple .searchresults div {
+    padding-top:7px;
+}
+
+/* Hide the useless part of the search bar */
+.simple .advanced { display:none; }
+.advanced .simple { display:none; }
+
+#period1, #period2 {
+    width: 26ex;
+}
+
+.search img.logo {
+    position: absolute;
+    top: 2px;
+    right: 5px;
+    height: 76px;
+    width: 81px;
+}
+
+.simple img.logo {
+    height: 53px;
+    width: 56px;
+}
+
+.nbDownload {
+    font-style: italic;
+}
+
+#kwpopdiv1, #kwpopdiv2 {
+    position:absolute;
+    display:none;
+    z-index: 9999;
+}
+
+/*----------------------- DATE MAP  -----------------------*/
+
+ybl {
+    float: left;
+    margin: 4px;;
+    font-size:10px;
+    font-weight: bold;
+    cursor: pointer;
+    border-style: solid;
+    border-width: 2px;
+}
+
+mbl  {
+    float: left;
+    margin: 2px;;
+    font-weight: normal;
+    border-style: solid;
+    border-width: 1px;
+}
+
+dbl {
+    float: left;
+    margin: 1px;;
+    padding-left: 1px;;
+    padding-right: 1px;;
+    border-style: none;
+    border-width: 1px;
+}
+
+txt {
+    padding-left: 1px;;
+    padding-right: 1px;;
+    display:block;
+}
+
+div#datemap {
+    float:left;
+    background-color:#fafdfa;
+    border: 1px inset #888;
+    min-height:30px;
+    min-width:500px;
+
+    clear:both;
+    width:100%;
+    text-align:center;
+}
+
+#datemappopdiv {
+    position:absolute;
+    display:none;
+    z-index: 9999;
+}
+
+div#dmdlg {
+    float:left;
+    border: 1px outset #ccc;
+    padding: 4px;
+    margin: 4px;
+    background-color:#e8e8e8;
+}
+
+div#dmbot {
+    float:left;
+    clear:both;
+    width:100%;
+    text-align:center;
+}
+
+p#dmperiod {
+    background-color:#ffd;
+    border: 1px inset #888;
+    position:absolute;
+    font-size:12px;
+    left: 9px;
+    bottom: 0;
+    width:26ex;
+    height:14px;
+}
+
+/* standard */
+ybl { border-color: #ccc; background-color: #eee; }
+mbl { border-color: #bbb; background-color: #ddd; }
+dbl { border-color: #aaa; background-color: #ccc; }
+
+/* year hovered*/
+ybl:hover                     { border-color: #cbb; background-color:#edd; }
+ybl:hover mbl                 { border-color: #baa; background-color:#dcc; }
+ybl:hover dbl                 { border-color: #a99; background-color:#cbb; }
+/* month hovered*/
+ybl:hover mbl:hover           { border-color: #c99; background-color:#ebb; }
+ybl:hover mbl:hover dbl       { border-color: #b88; background-color:#daa; }
+/* day hovered*/
+ybl:hover mbl:hover dbl:hover { border-color: #c77; background-color:#e99; }
+
+/* selected */
+ybl.sel                           { border-color: #8ad; background-color: #acf; }
+mbl.sel, ybl.sel mbl              { border-color: #79c; background-color: #9be; }
+dbl.sel, ybl.sel dbl, mbl.sel dbl { border-color: #68b; background-color: #8ad; }
+
+/* selected + year hovered*/
+ybl.sel:hover                                                                                           { border-color: #89c; background-color:#abe; }
+ybl.sel:hover mbl,                 ybl:hover mbl.sel                                                    { border-color: #78b; background-color:#9ad; }
+ybl.sel:hover dbl,                 ybl:hover mbl.sel dbl, ybl:hover dbl.sel                             { border-color: #67a; background-color:#89c; }
+/* selected + month hovered*/
+ybl.sel:hover mbl:hover,           ybl:hover mbl.sel:hover                                              { border-color: #87a; background-color:#a9c; }
+ybl.sel:hover mbl:hover dbl,       ybl:hover mbl.sel:hover dbl,       ybl:hover mbl:hover dbl.sel       { border-color: #769; background-color:#98b; }
+/* selected + day hovered*/
+ybl.sel:hover mbl:hover dbl:hover, ybl:hover mbl.sel:hover dbl:hover, ybl:hover mbl:hover dbl.sel:hover { border-color: #547; background-color:#769; }
+
+/*----------------------- PHOTO PAGE -----------------------*/
+
+.thumbpage {
+    margin-top:10px;
+    min-width: 850px;
+}
+.slidepage {
+    margin-top:5px;
+}
+
+.slidepage table {
+    padding-top:22px;
+    margin:0;
+}
+.thumbpage table {
+    margin:0;
+}
+
+.photopage td {
+    background: url(gradient.png) repeat-x bottom left; border: 1px solid #bbb;
+}
+
+.thumbpage td {
+    width:270px;
+}
+
+.photopage td.selected {
+    background: url(gradientSel.png) repeat-x bottom left; border: 1px solid #ffe04d;
+}
+
+.photopage td.invisible {
+    background: none;
+    border:none;
+}
+
+.photopage #navSlide {
+    position: absolute;
+    left:300px;
+}
+.photopage #backToThumbs {
+    position: absolute;
+    left:36px;
+    top:6px;
+}
+.photopage #nextSlide {
+    position: absolute;
+    left:55px;
+}
+.photopage #prevSlide {
+    position: absolute;
+}
+
+.photopage #runSlide {
+    position: absolute;
+    right:300px;
+}
+#play, #pause {
+    vertical-align:-38%;
+}
+
+/* Hide the useless part of the search bar */
+.playing .paused, .paused .playing { display:none; }
+
+#time {
+    width:2em;
+}
+
+.photopage .legend {
+    text-align: center;
+    font-size: 100%;
+    clear:both;
+    padding: 0;
+    margin: 0;
+}
+
+.photopage .ydsf img {
+    border: 1px solid #666;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.photopage .selected:after {
+    color: #f40;
+    content: "- To Download -";
+    font-weight: bold;
+    font-size: 90%;
+}
+
+.photopage .legend .title {
+    margin-top: 0;
+}
+
+.photopage .legend .comment {
+    font-style: italic;
+}
+
+/* Contains a photo date */
+.photopage .legend .date {
+    float: right;
+    text-align: right;
+    font-style: italic;
+    margin-right: 5px;
+    padding-top: 9px;
+    font-size: 10px;
+}
+.photopage .legend .icon {
+    float: left;
+}
+
+#exifdata table {
+    padding-top:0;
+    margin-top:15px;
+    border: 1px solid #888;
+}
+
+#exifdata th {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #aaa;
+    background-color: #eef;
+}
+
+#exifdata td {
+    background: none;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+#exifdata tr.odd td {
+    background-color: #eee; border: none;
+}
+
+#exifdata tr.even td {
+    background-color: #ccc; border: none;
+}
+
+/*----------------------- PHOTOS PAGER -----------------------*/
+
+.fl {
+    color: black;
+}
+.fl img {
+    vertical-align: middle;
+    border-style: none;
+}
+.flo {
+    font-weight: bold;
+    color: #ff0000;
+    text-decoration: none;
+}
+.fl:hover {
+    font-weight: bold;
+    color: #ff5500;
+}
+
+/*----------------------- PROGRESS BAR -----------------------*/
+
+.percents {
+    float: left;
+    clear: right;
+    color: #000;
+    padding-top: 5px;
+    background: url(input-shadow.gif) no-repeat -1px -1px;
+    border: 1px solid #888;
+    height: 20px;
+    position:absolute;
+    width:275px;
+    left: 10px;
+    top: 138px;
+    text-align: center;
+}
+
+.blocks {
+    float: left;
+    clear: right;
+    color: #000;
+    background: #555;
+    border-right: 1px solid #000;
+    height: 26px;
+    position: absolute;
+    left: 11px;
+    top: 138px;
+    filter: alpha(opacity=30);
+    -moz-opacity: 0.3;
+    opacity: 0.3;
+    -khtml-opacity: .3
+}
+
