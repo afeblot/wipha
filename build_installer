@@ -18,5 +18,7 @@ rm -rf "$installerName"
     -V "$version" \
     -A \
     -R \
+    -F \
+    -b "#ffffff" -g "#000000" \
     -c "$install_script" \
     "$installerName"
