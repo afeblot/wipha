@@ -10,7 +10,7 @@ rm -rf "$installerName"
 
 /usr/local/bin/platypus \
     -a "Web iPhoto Access installer" \
-    -o "TextWindow" \
+    -o "Text Window" \
     -i "build_resources/installer.icns" \
     -u "Alexandre Feblot" \
     -f "$(pwd)/$tbz" \
@@ -18,5 +18,5 @@ rm -rf "$installerName"
     -V "$version" \
     -A \
     -R \
-    "$install_script" \
+    -c "$install_script" \
     "$installerName"
