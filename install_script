@@ -57,6 +57,7 @@ osver=`sw_vers | awk '/ProductVersion/ {print substr($2,0,4)}'`
 case "$osver" in
     10.2 | 10.3 | 10.4 ) webserver="apache";;
     10.5 ) webserver="apache2";;
+    10.6 ) webserver="apache2";;
     * ) echo "I don't know this OSX version: '$osver'"; exit 1;;
 esac
 

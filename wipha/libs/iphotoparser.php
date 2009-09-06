@@ -446,7 +446,7 @@ class IphotoParser {
     function timerIntervalToTimestamp($appleTimerInterval) {
         // Apple timer interval seems to be in seconds, starting on 01 January 2001
         $d = getdate(intval($appleTimerInterval));
-        return mktime($d['hours'],$d['minutes'],$d['seconds'], $d['mon'],$d['mday'],$d['year']+31, 0);
+        return mktime($d['hours'],$d['minutes'],$d['seconds'], $d['mon'],$d['mday'],$d['year']+31);
     }
 }
 
