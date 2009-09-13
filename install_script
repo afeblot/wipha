@@ -120,7 +120,7 @@ if [ -e "/tmp/data_$unique" ]; then
     mv "/tmp/data_$unique" "$dest/wipha/data" 2> $log
     test_error $?
     rm -r "/tmp/data_empty_$unique"
-    rm -f "$dest/wipha/data/cache/*.jpg"
+    rm -f "$dest/wipha/data/cache/*"
 fi
 
 if [ -e "/tmp/wipha.conf_$unique" ]; then
