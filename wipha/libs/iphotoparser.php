@@ -318,14 +318,15 @@ class IphotoParser {
                                 break;
                             case 'AlbumId':
                             case 'AlbumName':
-                            case 'Parent':  // used only to reject "roll" albums
+                            case 'Parent':
+                                // The AlbumId can't easily be changed, since it may be referenced in other albums in the 'Parent' key.
                                 $this->album[$this->key] = $this->content;
                                 break;
                             case 'RollName':
                                 $this->album['AlbumName'] = $this->content;
                                 break;
                             case 'RollID':
-                                $this->album['AlbumId'] = $this->content;
+                                $this->album['AlbumId'] = 'e'.$this->content; // Add a 'e' so that event IDs can't conflict with Album IDs
                                 $this->album['AlbumType'] = 'Event';
                                 $this->album['Parent'] = EVENT_MASTER_ALBUM;
                                 break;
