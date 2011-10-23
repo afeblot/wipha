@@ -358,42 +358,49 @@ function sendVideo($path, $cacheTime) {
     }
     
     session_write_close();
-    
-    $mimetype = videoMimetype($path);
-    header("Content-Type: $mimetype");
+
     if ( ! httpConditional(filemtime($path), $cacheTime, 0, false, false, false)) {
+        $mimetype = videoMimetype($path);
+        header("Content-Type: $mimetype");
+
         $filesize = filesize($path);
-        header("Content-Length: $filesize");
 
         if ( isset($_SERVER['HTTP_RANGE']) ) {
-            $partialContent = true;
-
             list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
             $range  = explode('-', $range);
-            $offset = $range[0];
-            $end    = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $filesize;
-
-            header("Accept-Ranges: $offset-$filesize");
+            $offset = (isset($range[0]) && is_numeric($range[0])) ? $range[0] : 0;
+            $end    = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $filesize-1;
+            $length = $end-$offset+1;
+            header("Accept-Ranges: 0-$filesize");
             header('HTTP/1.1 206 Partial Content');
             header("Content-Range: bytes $offset-$end/$filesize");
-
+            header("Content-Length: $length");
+            sendVideoRange($path, $offset, $end, 8192);
         } else {
-            $partialContent = false;
-
-            $offset = 0;
             header('Accept-Ranges: bytes');
+            header("Content-Length: $filesize");
+            sendVideoRange($path, 0, $filesize-1, 8192);
         }
-
-        $file = fopen($path, 'rb');
-        fseek($file, $offset, 0);
-
-        while(!feof($file)) {
-            print fread($file, 4096);
-        }
-        fclose($file);
     }
     exit;
 }
+
+//----------------------------------------------
+function sendVideoRange($path, $start, $end, $bufferSize) {
+    $file = fopen($path, 'rb');
+    fseek($file, $start, 0);
+
+    while(!feof($file) && ($pos = ftell($file)) <= $end) {
+        if ($pos+$bufferSize>$end) {
+            $bufferSize = $end-$pos+1;
+        }
+        print fread($file, $bufferSize);
+        flush(); ob_flush();
+    }
+    fclose($file);
+}
+
+
 
 //----------------------------------------------
 function sipsArgs($transfoParams) {
