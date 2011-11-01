@@ -167,7 +167,7 @@ function updateNbSelected(originalRequest) {
 
 //-----------------------------------------------------------------------------
 function togglePhotoSelection(elt) {
-    var td = elt.parentNode.parentNode.parentNode.parentNode;
+    var td = elt.parentNode.parentNode.parentNode;
     if (td.className=="selected") {
         td.className = "";
         sendAjax("act=del&id[]="+elt.id.slice(1), updateNbSelected);
@@ -183,7 +183,7 @@ function changeAllFromPage(tdClass, action) {
     var ids = new Array();
     for (i=0; i<elts.length; i++) {
         var elt=elts[i];
-        var td = elt.parentNode.parentNode.parentNode.parentNode;
+        var td = elt.parentNode.parentNode.parentNode;
         if (td.className!=tdClass) {
             td.className = tdClass;
             ids.push("id[]="+elt.id.slice(1));

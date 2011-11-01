@@ -16,9 +16,9 @@
     <td align="center" valign="bottom" {$photoId|is_in_array:$download:'class="selected"'}>
         <div class="centercell"> <div class="ydsf"> <div class="inner">
 {if $photo.MediaType eq "Image"}
-            <img class="photo" src="{$smarty.server.SCRIPT_NAME}?ph={$photoId}&amp;lib={$smarty.session.library.id}" alt="" id="p{$photoId}" width="{$width}" height="{$height}"/>
+            <img src="{$smarty.server.SCRIPT_NAME}?ph={$photoId}&amp;lib={$smarty.session.library.id}" alt="" width="{$width}" height="{$height}"/>
 {else}
-            <img class="photo" src="{$smarty.server.SCRIPT_NAME}?th={$photoId}&amp;lib={$smarty.session.library.id}" alt="" id="p{$photoId}" width="{$width}" height="{$height}"/>
+            <img src="{$smarty.server.SCRIPT_NAME}?th={$photoId}&amp;lib={$smarty.session.library.id}" alt="" width="{$width}" height="{$height}"/>
 {/if}
         </div> </div> </div>
         <div class="legend">
@@ -27,6 +27,7 @@
             {/if}{if $photo.Comment ne ""}
                 <div class="comment">{$photo.Comment|escape}</div>
             {/if}
+                <div class="icon"><img src="skin/{#skin#}/download.png" id="p{$photoId}" class="photo" alt="toggle download selection" title="Click to toggle download selection" /></div>
             {if $photo.MediaType eq "Image"}
                 <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?fs={$photoId}&amp;lib={$smarty.session.library.id}" target="_blank"><img src="skin/{#skin#}/zoom.gif" alt="zoom" title="Display the full size photo" /></a></div>
             {else}

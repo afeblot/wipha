@@ -8,9 +8,13 @@
                td_attr=$photoIds|is_in_array:$download:'class="selected"'|cat:'align="center" valign="bottom"'
 }
 <div class="centercell">
-    <div class="ydsf"> <div class="inner">
-        <img src="{$smarty.server.SCRIPT_NAME}?th={$photoId}&amp;lib={$smarty.session.library.id}" width="{$photos[$photoId].width}" height="{$photos[$photoId].height}" alt="" id="p{$photoId}" class="photo" title="Click to toggle download selection" />
-    </div> </div>
+    <div class="ydsf">
+{if $photos[$photoId].MediaType eq "Image"}        <a href="{$smarty.server.SCRIPT_NAME}?sl={$photoId}">{/if}
+        <div class="inner">
+            <img src="{$smarty.server.SCRIPT_NAME}?th={$photoId}&amp;lib={$smarty.session.library.id}" width="{$photos[$photoId].width}" height="{$photos[$photoId].height}" alt="slideshow" title="Click for slideshow mode" />
+        </div>
+{if $photos[$photoId].MediaType eq "Image"}        </a>{/if}
+    </div>
 </div>
 <div class="legend">
 {if $photos[$photoId].Caption ne ""}
@@ -18,9 +22,9 @@
 {/if}{if $photos[$photoId].Comment ne ""}
     <div class="comment">{$photos[$photoId].Comment|escape}</div>
 {/if}
+    <div class="icon"><img src="skin/{#skin#}/download.png" id="p{$photoId}" class="photo" alt="toggle download selection" title="Click to toggle download selection" /></div>
 {if $photos[$photoId].MediaType eq "Image"}
     <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?fs={$photoId}&amp;lib={$smarty.session.library.id}" target="_blank"><img src="skin/{#skin#}/zoom.gif" alt="zoom" title="Display the full size photo" /></a></div>
-    <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?sl={$photoId}"><img src="skin/{#skin#}/slideshow.png" alt="slideshow" title="Slideshow mode" /></a></div>
 {else}
     <div class="icon"><a href="{$smarty.server.SCRIPT_NAME}?vd={$photoId}&amp;lib={$smarty.session.library.id}" target="_blank"><img src="skin/{#skin#}/video.png" alt="view video" title="View video" /></a></div>
 {/if}
