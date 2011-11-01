@@ -54,13 +54,8 @@ fi
 
 # Find out which version of OSX we run on
 osver=`sw_vers | awk '/ProductVersion/ {print substr($2,0,4)}'`
-case "$osver" in
-    10.2 | 10.3 | 10.4 ) webserver="apache";;
-    10.5 ) webserver="apache2";;
-    10.6 ) webserver="apache2";;
-    * ) echo "I don't know this OSX version: '$osver'"; exit 1;;
-esac
 
+webserver="apache2"
 
 unique=$(date "+%d_%b_%Y-%H_%M_%S")
 
@@ -147,18 +142,12 @@ test_error $?
 
 ### Apache configuration ###
 case "$webserver" in
-    apache)  webserverconf="/etc/httpd/httpd.conf";;
     apache2) webserverconf="/etc/apache2/httpd.conf";;
 esac
 
 echo
 echo "Configuring Apache to handle php"
 cat $webserverconf | case "$webserver" in
-    apache) awk ' \
-/[ \t]*#[ \t]*LoadModule[ \t]+php4_module/ {print "# Following line uncommented by WiPha installer"; print "LoadModule php4_module", $3; next} \
-/[ \t]*#[ \t]*AddModule[ \t]+mod_php4.c/ {print "# Following line uncommented by WiPha installer"; print "AddModule mod_php4.c"; next} \
-{print $0} \
-';;
     apache2) awk ' \
 /[ \t]*#[ \t]*LoadModule[ \t]+php5_module/ {print "# Following line uncommented by WiPha installer"; print "LoadModule php5_module", $3; next} \
 {print $0} \
@@ -167,7 +156,7 @@ esac 1> /tmp/httpd.conf 2>$log
 test_error $?
 if [ "$(diff $webserverconf /tmp/httpd.conf)" != "" ]; then
     backupOnce $webserverconf
-    # Why does mv hang ???? Let's replace it bt cp+rm
+    # Why does mv hang ???? Let's replace it by cp+rm
     # mv /tmp/httpd.conf $webserverconf  2>$log
     cp /tmp/httpd.conf $webserverconf  2>$log
     test_error $?
@@ -224,17 +213,6 @@ echo -n "smarty cache files removed: "
 if [ ! -d "/tmp/smarty/wipha" ]; then echo "ok"; else echo "KO ! (Please delete /tmp/smarty/wipha to make sure wipha new html content is properly displayed)"; err=1; fi
 
 case "$webserver" in
-    apache)
-        echo -n "OSX Standard PHP4 enabled: "
-        load=$(grep -c -E "^[ \t]*LoadModule[ \t]+php4_module[ \t]+libexec/httpd/libphp4.so" $webserverconf)
-        add=$(grep -c -E "^[ \t]*AddModule[ \t]+mod_php4.c" $webserverconf)
-        if [ "$load" == "1" ] && [ "$add" == "1" ]; then echo "ok (unless other PHP versions also installed)"; else
-            echo "KO !"; err=1
-            echo "    You should have these 2 lines in $webserverconf:"
-            echo "        LoadModule php4_module libexec/httpd/libphp4.so"
-            echo "        AddModule mod_php4.c"
-        fi
-        ;;
     apache2)
         echo -n "OSX Standard PHP5 enabled: "
         load=$(grep -c -E "^[ \t]*LoadModule[ \t]+php5_module[ \t]+libexec/apache2/libphp5.so" $webserverconf)

@@ -23,7 +23,7 @@ $(TBZ): $(PERM) $(GET_TRUE_NAME) FORCE
         --exclude "wipha/test.*" \
         --exclude "wipha/data/*.ser" \
         --exclude "wipha/data/*.dat" \
-        --exclude "wipha/data/cache/*" \
+        --exclude "wipha/data/cache/*.*" \
         --exclude "wipha/3rdParty/phpZipLight" \
         wipha
 
@@ -33,11 +33,11 @@ $(VER): wipha/configs/wipha.conf
 # Carbon framework only required for getTrueName
 wipha/% : %.c
 	@ echo "Build $@" ; \
-	gcc -Wall -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4 -o "$@" "$<" -framework Carbon ; chmod 4755 "$@"
+	gcc -Wall -arch i386 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.6.sdk -mmacosx-version-min=10.6 -o "$@" "$<" -framework Carbon ; chmod 4755 "$@"
 
 % : %.c
 	@ echo "Build $@" ; \
-	gcc -Wall -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4 -o "$@" "$<"
+	gcc -Wall -arch i386 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.6.sdk -mmacosx-version-min=10.6 -o "$@" "$<"
 
 HELP_FILES=install.html \
            admin.html \
