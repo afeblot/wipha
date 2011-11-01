@@ -428,7 +428,6 @@ ybl.sel:hover mbl:hover dbl:hover, ybl:hover mbl.sel:hover dbl:hover, ybl:hover 
     border: 1px solid #666;
     padding: 0;
     margin: 0;
-    cursor: pointer;
 }
 
 .photopage .selected:after {
@@ -457,6 +456,11 @@ ybl.sel:hover mbl:hover dbl:hover, ybl:hover mbl.sel:hover dbl:hover, ybl:hover 
 }
 .photopage .legend .icon {
     float: left;
+}
+
+.photo {
+    cursor: pointer;
+    cursor:hand;
 }
 
 #exifdata table {
