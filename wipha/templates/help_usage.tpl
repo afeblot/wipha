@@ -164,9 +164,6 @@ image.</p>
 <p><img src="img/video.png" alt="Video"/> In case of a movie, you'll get the
 camera icon to download and watch it in your browser.</p>
 
-<p><img src="img/slideshow.png" alt="Slide"/> The slide icon brings you into the
-slideshow mode, which also let's you see EXIF data for the image.</p>
-
 <div class="image">
 <img src="img/photopage.jpg" alt="Photos Page"/>
 </div>
@@ -180,8 +177,11 @@ slideshow mode, which also let's you see EXIF data for the image.</p>
 
 <a name="slide"><h3>Slideshow mode</h3></a>
 
+<p>By clicking on a picture in the thumb mode, you enter the slideshow mode.</p>
+
 <p>In this mode you can display the photos you found from your search parameters
-at a larger size and go forward and backward among them.</p>
+at a larger size and go forward and backward among them. You may also display
+EXIF data.</p>
 
 <p><img src="img/thumbs.gif" alt="Thumbs"/> If you want to return to the thumb page, click the grid
 icon between the arrows.</p>
@@ -211,7 +211,8 @@ taken. </p>
 Similar in concept to a shopping cart, the user selects the desired photos, then
 can download all the selected photos in a batch as a compressed &quot;zip&quot;
 file.</p>
-<p>Click on an image to select it for download. Its background will turn to
+<p>Click on <img src="img/download.png" alt="Download"/>
+to select a photo for download. Its background will turn to
 yellow. The number of selected pictures is dislayed in the search bar. You can
 easily select or unselect all pictures of the current page using the two links
 right below the search bar. If you selected pictures from multiple searches or

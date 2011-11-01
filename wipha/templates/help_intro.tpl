@@ -61,7 +61,7 @@ internet, and its web server is still running.</p>
 
 <a name="phcast"><h3>Photocast your albums for free</h3></a>
 <ul>
-    <li>Every Album is automatically <a href="http://www.apple.com/ilife/iphoto/features/photocasting.html" target="_blank">photocast</a> (rss feed) without requiring a .mac account!</li>
+    <li>Every Album is automatically photocast (rss feed). Photocast is to photo what poscast is to audio</li>
     <li>Photocast may be used with iPhoto 6 or any RSS reader on any OS </li>
 </ul>
 
@@ -107,7 +107,7 @@ internet, and its web server is still running.</p>
 <a name="reqsrv"><h3> For you, on the server side</h3></a>
 <ul>
     <li> iPhoto Library version 4, 5, 6 or 7 </li>
-    <li> Mac OSX 10.5.x (tested), 10.4.x (tested) or 10.3.x (not tested) [Universal binaries]</li>
+    <li> Mac OSX 10.7.x (tested) or 10.6.x</li>
     <li> Mac OSX default PHP or Entropy PHP5 package (tested)</li>
 </ul>
 
