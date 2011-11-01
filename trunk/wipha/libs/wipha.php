@@ -694,7 +694,7 @@ class Wipha {
         }
 
         $path = $_SESSION['library']['path'].$_SESSION['photos'][$photoId]['ImagePath'];
-        sendVideo($path, 21600);
+        sendVideo($path);
     }
 
    //----------------------------------------------

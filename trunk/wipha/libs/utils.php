@@ -238,6 +238,14 @@ function d(&$var) {
 }
 
 //----------------------------------------------
+// Debug function
+function l($str) {
+    $f = fopen("/tmp/wipha.log","a");
+    fwrite($f, $str);
+    fclose($f);
+}
+
+//----------------------------------------------
 function isOnLinux() {
     return (php_uname("s")=="Linux");
 }
@@ -345,7 +353,7 @@ function videoMimetype($file) {
 }
 
 //----------------------------------------------
-function sendVideo($path, $cacheTime) {
+function sendVideo($path) {
     $path = getMacAliasOriginal($path, $error);
     if ( ! isset($path)) {
         die($error);
@@ -359,11 +367,14 @@ function sendVideo($path, $cacheTime) {
     
     session_write_close();
 
-    if ( ! httpConditional(filemtime($path), $cacheTime, 0, false, false, false)) {
+    # l("sendVideo\n");
+
+    if ( ! httpConditional(filemtime($path), -1, 0, false, false, false)) {
         $mimetype = videoMimetype($path);
         header("Content-Type: $mimetype");
 
         $filesize = filesize($path);
+        # l("OK to stream $filesize ($mimetype)\n");
 
         if ( isset($_SERVER['HTTP_RANGE']) ) {
             list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
@@ -375,10 +386,12 @@ function sendVideo($path, $cacheTime) {
             header('HTTP/1.1 206 Partial Content');
             header("Content-Range: bytes $offset-$end/$filesize");
             header("Content-Length: $length");
+            # l("http range: $_SERVER[HTTP_RANGE] -> $offset, $end, $length\n");
             sendVideoRange($path, $offset, $end, 8192);
         } else {
             header('Accept-Ranges: bytes');
             header("Content-Length: $filesize");
+            # l("full\n");
             sendVideoRange($path, 0, $filesize-1, 8192);
         }
     }
@@ -394,6 +407,7 @@ function sendVideoRange($path, $start, $end, $bufferSize) {
         if ($pos+$bufferSize>$end) {
             $bufferSize = $end-$pos+1;
         }
+        # l("    stream $bufferSize from $pos\n");
         print fread($file, $bufferSize);
         flush(); ob_flush();
     }

@@ -13,7 +13,7 @@
  Interface:
  - function httpConditional($UnixTimeStamp,$cacheSeconds=0,$cachePrivacy=0,$feedMode=false,$compression=false)
   [Required] $UnixTimeStamp: Date of the last modification of the data to send to the client (Unix Timestamp format).
-  [Implied] $cacheSeconds=0: Lifetime in seconds of the document. If $cacheSeconds>0, the document will be cashed and not revalidated against the server for this delay.
+  [Implied] $cacheSeconds=0: Lifetime in seconds of the document. If $cacheSeconds<0, cache is disabled. If $cacheSeconds==0, the document will be revalidated each time it is accessed. If $cacheSeconds>0, the document will be cashed and not revalidated against the server for this delay.
   [Implied] $cachePrivacy=0: 0=private, 1=normal (public), 2=forced public. When public, it allows a cashed document ($cacheSeconds>0) to be shared by several users.
   [Implied] $feedMode=false: Special RSS/ATOM feeds. When true, it sets $cachePrivacy to 0 (private), does not use the modification time of the script itself, and puts the date of the client's cache (or a old date from 1980) in the global variable $clientCacheDate.
   [implied] $compression=false: Enable the compression and allows persistant connections (automatic detection of the capacities of the client).
@@ -35,24 +35,25 @@
   ... //Rest of the script, just as you would do normally.
  ?>
 
- Version 1.6.1, 2005-04-03, http://alexandre.alapetite.net/doc-alex/php-http-304/
+ Version 1.6.2a, 2008-03-06, http://alexandre.alapetite.fr/doc-alex/php-http-304/
 
  ------------------------------------------------------------------
- Written by Alexandre Alapetite, http://alexandre.alapetite.net/cv/
+ Written by Alexandre Alapetite, http://alexandre.alapetite.fr/cv/
 
- Copyright 2004-2005, Licence: Creative Commons "Attribution-ShareAlike 2.0 France" BY-SA (FR),
+ Copyright 2004-2008, Licence: Creative Commons "Attribution-ShareAlike 2.0 France" BY-SA (FR),
  http://creativecommons.org/licenses/by-sa/2.0/fr/
- http://alexandre.alapetite.net/divers/apropos/#by-sa
+ http://alexandre.alapetite.fr/divers/apropos/#by-sa
  - Attribution. You must give the original author credit
  - Share Alike. If you alter, transform, or build upon this work,
    you may distribute the resulting work only under a license identical to this one
+   (Can be included in GPL/LGPL projects)
  - The French law is authoritative
  - Any of these conditions can be waived if you get permission from Alexandre Alapetite
  - Please send to Alexandre Alapetite the modifications you make,
    in order to improve this file for the benefit of everybody
 
  If you want to distribute this code, please do it as a link to:
- http://alexandre.alapetite.net/doc-alex/php-http-304/
+ http://alexandre.alapetite.fr/doc-alex/php-http-304/
 */
 
 //In RSS/ATOM feedMode, contains the date of the clients last update.
@@ -60,7 +61,7 @@ $clientCacheDate=0; //Global public variable because PHP4 does not allow conditi
 $_sessionMode=false; //Global private variable
 
 function httpConditional($UnixTimeStamp,$cacheSeconds=0,$cachePrivacy=0,$feedMode=false,$compression=false,$session=false)
-{//Credits: http://alexandre.alapetite.net/doc-alex/php-http-304/
+{//Credits: http://alexandre.alapetite.fr/doc-alex/php-http-304/
  //RFC2616 HTTP/1.1: http://www.w3.org/Protocols/rfc2616/rfc2616.html
  //RFC1945 HTTP/1.0: http://www.w3.org/Protocols/rfc1945/rfc1945.txt
 
@@ -147,15 +148,19 @@ function httpConditional($UnixTimeStamp,$cacheSeconds=0,$cachePrivacy=0,$feedMod
   //rfc2616-sec14.html#sec14.3
   if ($compression) ob_start('_httpConditionalCallBack'); //Will check HTTP_ACCEPT_ENCODING
   //header('HTTP/1.0 200 OK');
-  if ($cacheSeconds==0)
+  if ($cacheSeconds<0)
   {
-   $cache='private, must-revalidate, ';
-   //$cacheSeconds=-1500000; //HTTP/1.0
+   $cache='private, no-cache, no-store, must-revalidate';
+   header('Pragma: no-cache');
   }
-  elseif ($cachePrivacy==0) $cache='private, ';
-  elseif ($cachePrivacy==2) $cache='public, ';
-  else $cache='';
-  $cache.='max-age='.floor($cacheSeconds);
+  else
+  {
+   if ($cacheSeconds==0) $cache='private, must-revalidate, ';
+   elseif ($cachePrivacy==0) $cache='private, ';
+   elseif ($cachePrivacy==2) $cache='public, ';
+   else $cache='';
+   $cache.='max-age='.floor($cacheSeconds);
+  }
   //header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T',time()+$cacheSeconds)); //HTTP/1.0 //rfc2616-sec14.html#sec14.21
   header('Cache-Control: '.$cache); //rfc2616-sec14.html#sec14.9
   header('Last-Modified: '.$dateLastModif);
@@ -171,7 +176,7 @@ function _httpConditionalCallBack($buffer,$mode=5)
  //You can adjust the level of compression with zlib.output_compression_level in php.ini
  if (extension_loaded('zlib')&&(!ini_get('zlib.output_compression')))
  {
-  $buffer2=ob_gzhandler($buffer,$mode); //Will check HTTP_ACCEPT_ENCODING and put correct headers
+  $buffer2=ob_gzhandler($buffer,$mode); //Will check HTTP_ACCEPT_ENCODING and put correct headers such as Vary //rfc2616-sec14.html#sec14.44
   if (strlen($buffer2)>1) //When ob_gzhandler succeeded
    $buffer=$buffer2;
  }
@@ -181,7 +186,7 @@ function _httpConditionalCallBack($buffer,$mode=5)
 
 function httpConditionalRefresh($UnixTimeStamp)
 {//Update HTTP headers if the content has just been modified by the client's request
- //See an example on http://alexandre.alapetite.net/doc-alex/compteur/
+ //See an example on http://alexandre.alapetite.fr/doc-alex/compteur/
  if (headers_sent()) return false;
 
  if (isset($_SERVER['SCRIPT_FILENAME'])) $scriptName=$_SERVER['SCRIPT_FILENAME'];
