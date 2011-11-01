@@ -1,5 +1,5 @@
 /*
-Copyright Alexandre Feblot, 2005-2009
+Alexandre Feblot, 2005-2011
 http://globs.org
 
 This software is a computer program whose purpose is to let people share
