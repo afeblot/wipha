@@ -35,21 +35,32 @@ else
 fi
 
 home="/Users/$user"
-dest="$home/Sites"
 src="$1"
 
-if  ! [ -d "$dest" ]; then
-    otherDest="$HOME/Sites"
-    if [ -d "$otherDest" ]; then
-        dest=$otherDest
-    else
-        echo "Can't find a correct destination for WiPhA. Tried:"
-        echo "   - $dest"        
-        if [ "$otherDest" != "$dest" ]; then
-            echo "   - $otherDest"
-        fi
-        exit 1
+# Find out where to install WiPhA
+destFile=/tmp/wiphadest
+if [ -r $destFile ]; then
+    dests[${#dests[@]}]=$(cat $destFile);
+    echo "Override WiPhA default destination with content of $destFile: $dests"
+else
+    dests[${#dests[@]}]="$home/Sites";
+    if [ "$home" != "$HOME" ]; then
+        dests[${#dests[@]}]="$HOME/Sites";
     fi
+fi
+for testDest in "${dests[@]}"; do
+    if [ -d "$testDest" ]; then
+        dest="$testDest"
+        break
+    fi
+done
+if [ -z "$dest" ]; then
+    echo "Can't find a correct destination for WiPhA. Tried:"
+    for dest in "${dests[@]}"; do
+        echo "   - $dest"        
+    done
+else
+    echo "Will install in: $dest"
 fi
 
 # Find out which version of OSX we run on
