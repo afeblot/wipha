@@ -1,22 +1,39 @@
 VER=$(shell awk -F\" '/version/ {print $$2}' wipha/configs/wipha.conf)
 DMG=WiPhA_v$(VER).dmg
-INSTALLER=dmgContent/WiPhA\ Installer.app
+DMG_ROOT=/tmp/wiphaDmgRoot
+DMG_IMG_DIR=$(DMG_ROOT)/doc/img
+DMG_SRC_DIR=$(DMG_ROOT)/src
+DMG_LICENSE=$(DMG_ROOT)/LICENSE.txt
+DMG_README=$(DMG_ROOT)/README.html
+INSTALLER=$(DMG_ROOT)/WiPhA\ Installer.app
 TBZ=wipha.tbz
 INSTALL_SCRIPT=install_script
-PERM=wipha/changeperm
+CHANGEPERM=wipha/changeperm
 APACHE_RESTART=apacheRestart
 GET_TRUE_NAME=wipha/getTrueName
 
+.PHONY: default dmgBaseContent help src clean
+
 default: $(DMG)
 
-$(DMG): $(INSTALLER) help src
-	@ cp build_resources/LICENSE.txt dmgContent/
-	hdiutil create -ov -fs HFS+ -srcfolder dmgContent -volname "WiPhA $(VER)" "$@"
+$(DMG): dmgBaseContent $(INSTALLER) help src
+	hdiutil create -ov -fs HFS+ -scrub -srcfolder $(DMG_ROOT) -volname "WiPhA $(VER)" "$@"
+
+dmgBaseContent: $(DMG_IMG_DIR) $(DMG_SRC_DIR) $(DMG_LICENSE) $(DMG_README)
+$(DMG_IMG_DIR):
+	@ mkdir -p $(DMG_ROOT)/doc/img
+$(DMG_SRC_DIR):
+	@ mkdir -p $(DMG_ROOT)/src
+$(DMG_LICENSE): build_resources/LICENSE.txt
+	@ cp "$<" "$@"
+$(DMG_README):
+	@ [ -h "$@" ] || ln -s doc/index.html "$@"
+    
 
 $(INSTALLER): $(INSTALL_SCRIPT) build_installer $(TBZ) $(APACHE_RESTART)
 	./build_installer $(INSTALL_SCRIPT) "$@" $(TBZ) $(APACHE_RESTART) "$(VER)"
 
-$(TBZ): $(PERM) $(GET_TRUE_NAME) FORCE
+$(TBZ): $(CHANGEPERM) $(GET_TRUE_NAME) FORCE
 	@ cp build_resources/LICENSE.txt wipha/
 	tar jcf "$@" \
         --exclude ".svn" \
@@ -46,12 +63,12 @@ HELP_FILES=install.html \
            usage.html \
            history.html
 
-TRGD=dmgContent/doc
-SRCD=dmgContent/src
+TRGD=$(DMG_ROOT)/doc
+SRCD=$(DMG_ROOT)/src
 TPLD=wipha/templates
 RSCD=build_resources/doc
 IDX=TPLD/help_index.tpl
-DMG_HELP=$(HELP_FILES:%=dmgContent/doc/%)
+DMG_HELP=$(HELP_FILES:%=$(DMG_ROOT)/doc/%)
 GUPPY_SRC=$(filter-out install.html,$(HELP_FILES))
 GUPPY_HELP=$(GUPPY_SRC:%=guppydoc/%)
 
@@ -99,7 +116,7 @@ guppydoc/%.html: $(RSCD)/%.html
 FORCE:
 
 clean:
-	@ rm -rf $(TBZ) $(DMG) $(INSTALLER) $(DMG_HELP) $(GUPPY_HELP) $(APACHE_RESTART) $(PERM) $(GET_TRUE_NAME) dmgContent/doc/img/* dmgContent/LICENSE.txt
+	@ rm -rf $(TBZ) $(DMG) $(DMG_ROOT) $(GUPPY_HELP) $(APACHE_RESTART) $(CHANGEPERM) $(GET_TRUE_NAME)
 
 essai.app: 
 	./build_installer essai_script "$@" pipo "$(VER)"
