@@ -143,6 +143,9 @@ class IphotoParser {
 
         $this->archivePath = dirname($file).'/';    // Don't rely on the value in AlbumData, it may be null
 
+        $this->dbProperties = NULL;
+        $this->AspectRatioStatement = NULL;
+
        // Create an XML parser
         $this->xml_parser = xml_parser_create();
         // Set the functions to handle opening and closing tags
@@ -271,6 +274,11 @@ class IphotoParser {
                                                 'PhotoIds'  => array()
                                             );
                                         }
+                                        if (version_compare($this->version, "9.4", ">=")) {
+                                            $dbPropertiesPath = 
+                                            $this->dbProperties = new PDO("sqlite:".$this->archivePath."/Database/apdb/Properties.apdb");
+                                            $this->AspectRatioStatement = $this->dbProperties->prepare("SELECT propertyKey, stringProperty FROM RKOtherProperty, RKUniqueString WHERE RKUniqueString.modelId=RKOtherProperty.stringId AND (RKOtherProperty.propertyKey='AspectRatio' OR RKOtherProperty.propertyKey='Orientation') AND RKOtherProperty.versionid=?");
+                                        }
                                         break;
                                 }
                                 break;
@@ -379,6 +387,10 @@ class IphotoParser {
                         if ($this->levels['DICT']==0) {
                             $this->state = PARSER_IN_PHOTO_LIST;
 // // //                            if (($this->photo['MediaType']=='Image')||(!isset($this->photo['MediaType']))) {
+                            // As of iPhoto 9.4, get Aspect Ratio from sqlite Properties database
+                            if (isset($this->AspectRatioStatement)) {
+                                $this->photo['Aspect Ratio'] = $this->getAspectRatioFromDatabase($this->photo['PhotoId']);
+                            }
                             $this->photos[$this->photo['PhotoId']] = $this->photo;
 // // //                            }
                             $this->photo = array();
@@ -449,6 +461,31 @@ class IphotoParser {
         $d = getdate(intval($appleTimerInterval));
         return mktime($d['hours'],$d['minutes'],$d['seconds'], $d['mon'],$d['mday'],$d['year']+31);
     }
+
+    //---------------------------------------------------------
+    function getAspectRatioFromDatabase($photoId) {
+        $this->AspectRatioStatement->execute(array($photoId));
+        $ratioData = $this->AspectRatioStatement->fetchall(PDO::FETCH_NUM);
+        if ($ratioData[0][0] == 'AspectRatio') {
+            $stringRatio = $ratioData[0][1];
+            $orientation = strtolower($ratioData[1][1]);
+        } else {
+            $stringRatio = $ratioData[1][1];
+            $orientation = strtolower($ratioData[0][1]);
+        }
+        if (preg_match('/^(\d+):(\d+)$/', $stringRatio, $matches)) {
+            if (($orientation == 'landscape' && $matches[2] > $matches[1]) || ($orientation == 'portrait' && $matches[2] < $matches[1])) {
+                $ratio = $matches[2]/$matches[1];
+            } else {
+                $ratio = $matches[1]/$matches[2];
+            }
+        } else {
+            print "Photo $photoId: Can't compute AspectRatio for string '$stringRatio' and orientation '$orientation'. ";
+            $ratio = 0;
+        }
+        return $ratio;
+    }
+    
 }
 
 
