@@ -1,0 +1,9 @@
+.centercell {
+    display: block;
+	margin: 10px;
+}
+
+p#dmperiod {
+    position:absolute;
+    bottom: -7px;
+}
